@@ -1,6 +1,13 @@
 button {
-    padding: 7px 12px;
+    padding: 9px 12px;
     border-radius: 9999px;
+    background: #3d54ff;
+    color: #fff;
     font-size: 1em;
-    border: solid 1px;
+    border: none 1px;
+}
+
+button .icon{
+    background: none;
+    color: #000;
 }

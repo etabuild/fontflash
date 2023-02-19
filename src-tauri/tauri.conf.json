@@ -4,18 +4,27 @@
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
-    "withGlobalTauri": false
+    "withGlobalTauri": true
+
   },
   "package": {
-    "productName": "fontviewer-tauri",
+    "productName": "fontviewer",
     "version": "0.0.0"
   },
   "tauri": {
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
+    },
     "allowlist": {
-      "all": false,
+      "all": true,
+      "protocol": {
+        "asset": true,
+        "assetScope": [ "**" ]
+      },
       "shell": {
-        "all": false,
-        "open": true
+        "scope": [
+
+        ]
       }
     },
     "bundle": {
@@ -33,7 +42,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "eta.fontviewer.tauri",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
