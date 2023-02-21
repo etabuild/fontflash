@@ -5,7 +5,6 @@
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": true
-
   },
   "package": {
     "productName": "fontviewer",
@@ -19,11 +18,12 @@
       "all": true,
       "protocol": {
         "asset": true,
-        "assetScope": [ "**" ]
+        "assetScope": [
+          "**"
+        ]
       },
       "shell": {
         "scope": [
-
         ]
       }
     },
@@ -68,6 +68,8 @@
     },
     "windows": [
       {
+        "decorations": false,
+        "transparent": true,
         "fullscreen": false,
         "height": 600,
         "resizable": true,

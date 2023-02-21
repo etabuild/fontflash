@@ -10,6 +10,13 @@ fn greet(name: &str) -> String {
 }
 */
 use std::env;
+use tauri::{Manager};
+
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    args: Vec<String>,
+    cwd: String,
+}
 
 #[tauri::command]
 fn get_args() -> String {
@@ -25,6 +32,13 @@ fn get_args() -> String {
 fn main() {
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+            app.emit_all("instance_detection", argv.join(",")).unwrap();
+
+        }))
+
+
         .invoke_handler(tauri::generate_handler![get_args])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

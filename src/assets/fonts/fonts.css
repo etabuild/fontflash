@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'notosans';
+    src: url('NotoSansCJKjp-Light.woff2');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'notosans';
+    src: url('NotoSansCJKjp-Regular.woff2');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'notosans';
+    src: url('NotoSansCJKjp-Bold.woff2');
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: 'notosans';
+    src: url('NotoSansCJKjp-Black.woff2');
+    font-weight: 700;
+}
+
