@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "fontviewer",
-    "version": "0.0.0"
+    "version": "0.1.1"
   },
   "tauri": {
     "security": {
@@ -71,6 +71,7 @@
         "decorations": false,
         "transparent": true,
         "fullscreen": false,
+
         "height": 600,
         "resizable": true,
         "title": "fontviewer-tauri",

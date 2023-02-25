@@ -1,14 +1,22 @@
 <template>
     <div id="config" class="modal hide">
-        <button class="materialicon icon"  @click="control_modal('config')"  id="b_modalcontrol">close</button>
+        <button class="materialicon icon" @click="control_modal('config')" id="b_modalcontrol">close</button>
     </div>
     <div id="shade" class="hide"></div>
 
-    <div id="container">
+    <div id="container" @select="block_select">
+
         <div id="toolbar">
-            <p id="label_appname">Fontauri</p>
+            <p data-tauri-drag-region id="label_appname">Fontauri</p>
+            <button id="b_close" @click="close_window()" class="materialicon icon win_control">close</button>
+            <button id="b_minimize" @click="minimize_window()" class="icon win_control">
+                <span style="transform: translateY(-6.5px); display: block" class="materialicon">minimize</span>
+            </button>
+
             <button id="b_setting" @click="control_modal('config')" class="materialicon icon">settings</button>
 
+            <button id="b_pin" v-if="pinned===false" @click="pinWindow()" class="materialicon icon">push_pin</button>
+            <button id="b_pin" v-if="pinned===true" @click="pinWindow()" class="materialicon icon filled">push_pin</button>
 
         </div>
         <div id="sidebar"><input type="text" id="path_field">
@@ -19,7 +27,8 @@
         <div id="viewer">
 
             <p id="filename">{{ filename }}</p>
-            <textarea class="preview">山路を登りながら、こう考えた。智に働けば角が立つ。</textarea>
+            <textarea @input="set_preview_height"
+                      class="preview">あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
 
             <p id="message">{{ message }}</p>
             <p id="path">{{ args }}</p>
@@ -31,6 +40,7 @@
 <script>
 import {convertFileSrc} from '@tauri-apps/api/tauri';
 import {emit, listen} from '@tauri-apps/api/event'
+import {appWindow} from '@tauri-apps/api/window'
 
 export default {
     name: "Main.vue",
@@ -41,11 +51,17 @@ export default {
             args: [],
             fontt: null,
             message: 'なんか入力して',
-
+            pinned: false,
+            fs: null
 
         }
     },
     mounted: function () {
+        
+        const path = process.cwd();
+// ファイル名の一覧
+        const filenames = fs.readdirSync(convertFileSrc(path));
+        console.log(filenames);
         console.log('aa');
         this.getArgs();
         let unlisten;
@@ -84,14 +100,14 @@ export default {
                     a.load_font(vm, args)
 
 
-                }).catch(function(e){
-                    alert(e)
+                }).catch(function (e) {
+                alert(e)
             })// 戻り値を表示
         },
         load_font: function (vm, args) {
-/*
-            document.fonts.delete(vm.fontt)
-*/
+            /*
+                        document.fonts.delete(vm.fontt)
+            */
             vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(args[1]) + ")")
             vm.fontt.load().then(function (loaded_face) {
                 /// フォント読み込み成功
@@ -112,21 +128,43 @@ export default {
         control_modal: function (modal) {
             let shade = document.getElementById("shade");
 
-            if(modal=='config'){
+            if (modal == 'config') {
                 let modal_config = document.getElementById("config");
-                if(modal_config.classList.contains('hide')){
+                if (modal_config.classList.contains('hide')) {
                     modal_config.classList.remove('hide')
                     shade.classList.remove('hide')
 
-                }else{
+                } else {
                     modal_config.classList.add('hide')
                     shade.classList.add('hide')
 
                 }
-            }else{
+            } else {
                 alert('No such a modal')
             }
+        },
+        close_window: function () {
+            appWindow.close();
+        },
+        minimize_window: function () {
+            appWindow.minimize();
+        },
+        set_preview_height: function () {
+            this.style.height = "auto";
+            this.style.height = `${this.scrollHeight}px`;
+        },
+        pinWindow: function () {
+            if (this.$data.pinned == false) {
+                appWindow.setAlwaysOnTop(true);
+                this.$data.pinned = true;
+
+
+            } else {
+                appWindow.setAlwaysOnTop(false);
+                this.$data.pinned = false;
+            }
         }
+
 
     }
 
@@ -137,9 +175,48 @@ export default {
 
 @import "stylesheets/default.css";
 
+#b_close {
+    grid-column: 5/6;
+    grid-row: 1/2;
+    border-radius: 0px 7px 0px 0px;
+}
+
+#b_close:hover {
+    background: #ff2424;
+    font-variation-settings: 'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+    color: #fff;
+}
+
+#b_pin {
+    grid-column: 3/4;
+    grid-row: 1/2;
+}
+
 #b_setting {
+    grid-column: 2/3;
+    grid-row: 1/2;
+
+}
+
+#b_minimize {
     grid-column: 4/5;
     grid-row: 1/2;
+    /*
+    transform:translateY(-6px);
+    */
+
+}
+
+#b_minimize:hover {
+    background: #d0d0d0;
+    border-radius: 0;
+    font-variation-settings: 'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
 }
 
 
@@ -149,7 +226,7 @@ export default {
     right: 7px;
 }
 
-#b_modalcontrol:hover{
+#b_modalcontrol:hover {
     font-variation-settings: 'FILL' 0,
     'wght' 900,
     'GRAD' 0,
@@ -181,6 +258,8 @@ export default {
     background: #f3f3f3;
     border-radius: 10px;
     padding: 10px;
+    height: 10em;
+
 }
 
 .preview :focus {
@@ -198,14 +277,24 @@ export default {
 #toolbar {
     grid-column: 1/3;
     grid-row: 1/2;
+    /*
     background: #fff;
+    */
+    margin: 0px -7px;
+    border-radius: 7px 7px 0px 0px;
+    /*
     border-radius: 8px;
+    */
+    /*
     box-shadow: #989898 0px 0px 6px;
+    */
     z-index: 20;
+    /*
     border: solid 1px #000;
+    */
     display: grid;
     grid-template-rows: 100%;
-    grid-template-columns: 1fr 50px 50px 50px;
+    grid-template-columns: 1fr 45px 45px 57px 57px;
     /*
     margin: -10px -20px 0 -20px;
     */
@@ -218,6 +307,7 @@ export default {
     border: solid 1px #969696;
     padding: 20px 20px 20px 40px;
     border-radius: 8px;
+    overflow: hidden;
 
 }
 
@@ -229,16 +319,19 @@ export default {
 #container {
     display: grid;
     grid-template-columns: 200px 1fr;
-    grid-template-rows: 50px 1fr;
+    grid-template-rows: 40px 1fr;
     gap: 7px;
+    border: 1px solid #000;
     height: calc(100vh - 6px * 2);
     /*
     height: 100vh;
     */
-    padding: 7px;
+    padding: 0px 7px 7px 7px;
     background: #dcdcdc;
     border-radius: 10px;
+    /*
     box-shadow: black 0px 0px 6px;
+    */
 
 }
 
@@ -247,5 +340,12 @@ export default {
 
 .materialicon {
     font-family: 'material_icon';
+}
+
+.materialicon.filled{
+    font-variation-settings: 'FILL' 1,
+    'wght' 900,
+    'GRAD' 0,
+    'opsz' 48
 }
 </style>
