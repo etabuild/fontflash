@@ -322,13 +322,15 @@ export default {
     grid-template-rows: 40px 1fr;
     gap: 7px;
     border: 1px solid #000;
-    height: calc(100vh - 6px * 2);
+    height: 100vh;
     /*
     height: 100vh;
     */
     padding: 0px 7px 7px 7px;
     background: #dcdcdc;
+    /*
     border-radius: 10px;
+    */
     /*
     box-shadow: black 0px 0px 6px;
     */

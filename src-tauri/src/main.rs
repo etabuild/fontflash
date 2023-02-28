@@ -11,11 +11,13 @@ fn greet(name: &str) -> String {
 */
 use std::env;
 use tauri::{Manager};
+use window_shadows::set_shadow;
+
 
 #[derive(Clone, serde::Serialize)]
 struct FileMetaData {
     font_name: String,
-    license: String
+    license: String,
 }
 
 
@@ -36,12 +38,15 @@ fn get_metadata() -> FileMetaData{
 */
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            set_shadow(&window, true).expect("Unsupported platform!");
+            Ok(())
+        })
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
             app.emit_all("instance_detection", argv.join(",")).unwrap();
         }))
-
-
         .invoke_handler(tauri::generate_handler![get_args])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
