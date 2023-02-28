@@ -58,10 +58,10 @@ export default {
     },
     mounted: function () {
         
-        const path = process.cwd();
+/*        const path = process.cwd();
 // ファイル名の一覧
         const filenames = fs.readdirSync(convertFileSrc(path));
-        console.log(filenames);
+        console.log(filenames);*/
         console.log('aa');
         this.getArgs();
         let unlisten;
