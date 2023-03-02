@@ -31,7 +31,6 @@ fn get_args() -> String {
     let mut paths: Vec<String> = env::args().collect();
     println!("{}", paths.join(","));
     let meta = &fs::metadata(r"C:\Users\ym174\OneDrive\デスクトップ\TBGoStdR-C6.otf");
-    println!("{:#?}", keys);
 
     return paths.join(",");
 }
@@ -42,25 +41,8 @@ fn get_data() -> () {
     */
     let mut args: Vec<String> = env::args().collect();
     let path = r"C:\Users\ym174\OneDrive\デスクトップ\TBGoStdR-C6.otf";
-/*    println!("{}", fs::metadata(path).join(","));
-*/    let data = std::fs::read(path).unwrap();
-    let collection = FontCollection::from_bytes(data).unwrap();
-    let font = collection.into_font().unwrap();
-    // フォントメタデータを取得
-    let family_name = font.names().family_names.get(0).map(|n| n.1); // ファミリー名
-    let style_name = font.names().font_subfamily.get(0); // スタイル名
-    let units_per_em = font.units_per_em(); // 単位あたりのエム数
-    let ascent = font.ascent(); // 上昇値
-    let descent = font.descent(); // 下降値
-    let line_gap = font.line_gap(); // 行間隔
-/*    return  FileData {
-        args,
-/*        metadata: fs::metadata(args.next(1));
-*/
 
-    }*/
-/*    FileData.font_path =  paths.join(",");
-*/}
+}
 
 
 
