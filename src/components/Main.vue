@@ -7,7 +7,7 @@
     <div id="container" @select="block_select">
 
         <div id="toolbar">
-            <p data-tauri-drag-region id="label_appname">Fontauri</p>
+            <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname">Fontauri</p>
             <button id="b_close" @click="close_window()" class="icon win_control">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m4.397 4.554.073-.084a.75.75 0 0 1 .976-.073l.084.073L12 10.939l6.47-6.47a.75.75 0 1 1 1.06 1.061L13.061 12l6.47 6.47a.75.75 0 0 1 .072.976l-.073.084a.75.75 0 0 1-.976.073l-.084-.073L12 13.061l-6.47 6.47a.75.75 0 0 1-1.06-1.061L10.939 12l-6.47-6.47a.75.75 0 0 1-.072-.976l.073-.084-.073.084Z" fill="#212121"/></svg>
             </button>
@@ -174,7 +174,8 @@ export default {
         toggle_windowMaximize: function(event){
             appWindow.toggleMaximize();
             this.$data.maximized = !this.$data.maximized
-            console.log(this.$data.maximized)
+            alert(this.$data.maximized)
+
         },
         minimize_window: function () {
             appWindow.minimize();
