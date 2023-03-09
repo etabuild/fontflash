@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "fontviewer",
+    "productName": "fontflash",
     "version": "0.1.1"
   },
   "tauri": {
@@ -42,7 +42,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "eta.fontviewer.tauri",
+      "identifier": "eta.fontfalsh.tauri",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -74,7 +74,7 @@
 
         "height": 600,
         "resizable": true,
-        "title": "fontviewer-tauri",
+        "title": "fontflash",
         "width": 800
       }
     ]
