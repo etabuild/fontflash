@@ -4,7 +4,7 @@
     </div>
     <div data-tauri-drag-region id="shade" class="hide"></div>
 
-    <div id="container" class="is_pinned" @select="block_select">
+    <div id="container" class="" @select="block_select">
 
         <div id="toolbar">
             <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname">FontFlash</p>
@@ -60,7 +60,7 @@
             </button>
 
         </div>
-        <div id="sidebar">
+        <div v-if="isSelected" id="sidebar">
             <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -78,14 +78,23 @@
                 </button>
             </div>
         </div>
-        <div id="viewer">
+        <div v-if="isSelected" id="viewer">
 
-            <p id="filename">{{ filename }}</p>
+            <div class="font_description">
+                <p id="filename">{{ filename }}</p>
+                <div class="font_size_control">
+                    <p class="p_size">{{previewFontSize}}</p>
+                    <input class="range" type="range">
+                </div>
+            </div>
             <textarea @input="set_preview_height"
                       class="preview">あのイーハトーヴォのすきとおった風、夏でも底にrrrrr冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
 
             <p id="message">{{ message }}</p>
             <p id="path">{{ args }}</p>
+        </div>
+        <div id="blank_view" v-if="!isSelected">
+            <p id="blank_message">ファイルを開いてね☆</p>
         </div>
     </div>
 
@@ -94,13 +103,16 @@
 <script>
 import {convertFileSrc} from '@tauri-apps/api/tauri';
 import {emit, listen} from '@tauri-apps/api/event'
-import {appWindow} from '@tauri-apps/api/window'
+import {appWindow, LogicalPosition, LogicalSize} from '@tauri-apps/api/window'
 
 export default {
     name: "Main.vue",
     data() {
         return {
+            previewFontSize: "1.3em",
+            isSelected: false,
             filename: 'ssss',
+            factor: null,
             isinput: true,
             args: [],
             fontt: null,
@@ -121,49 +133,64 @@ export default {
         // ファイル名の一覧
                 const filenames = fs.readdirSync(convertFileSrc(path));
                 console.log(filenames);*/
+        this.$data.factor = appWindow.scaleFactor()
         console.log('aa');
         this.getArgs();
         let unlisten;
         var a = this
         var vm = this.$data
 
-        async function f() {
+        async function instanceDetectionLister() {
             unlisten = await listen('instance_detection', event => {
                 console.log(`instance_detection ${event.payload} ${new Date()}`)
+                vm.isSelected = true
+
                 a.load_font(vm, event.payload.split(","))
             });
         }
 
-        f()
+        instanceDetectionLister()
 
 
     },
     methods: {
         getArgs: function () {
             this.$data.isinput = false;
-            var invoke = window.__TAURI__.invoke
+            let invoke = window.__TAURI__.invoke
 
             console.log('!')
-            var vm = this.$data
-            var a = this
-            invoke('get_args', {})
-                .then(function (rustMsg) {
+            let vm = this.$data
+            let a = this
+            /*           invoke('get_args', {})
+                           .then(function (rustMsg) {
 
-                    var args = rustMsg.split(",")
-                    if (args[1] != null) {
-                        console.log(args[1])
-                    } else {
-                        args[1] = "C:\\Users\\ym174\\OneDrive\\デスクトップ\\TBGoStdR-C6.otf"
-                    }
-                    a.load_font(vm, args)
+                               var args = rustMsg.split(",")
+                               if (args[1] != null) {
+                                   console.log(args[1])
+                               } else {
+                                   args[1] = "C:\\Users\\ym174\\OneDrive\\デスクトップ\\TBGoStdR-C6.otf"
+                               }
+                               a.load_font(vm, args)
 
 
-                }).catch(function (e) {
-                alert(e)
-            })// 戻り値を表示
+                           }).catch(function (e) {
+                           alert(e)
+                       })// 戻り値を表示*/
 
             invoke('get_data', {}).then(function (data) {
-                console.log(data)
+                let args = data.args;
+                console.log(args)
+
+                if (typeof args[1] !== "undefined") {
+
+                    a.load_font(vm, args)
+                    vm.isSelected = true
+                } else {
+                    /*
+                                        vm.isSelected = true
+                    */
+
+                }
             }).catch(function (e) {
                 alert(e)
             })
@@ -177,9 +204,11 @@ export default {
                 /// フォント読み込み成功
                 /// body要素全体にそれを適用する
                 document.fonts.add(loaded_face);
-                var splited_path = args[1].split('\\')
+                if (args[1] !== null) {
+                    let splited_path = args[1].split('\\')
+                    vm.filename = splited_path[splited_path.length - 1]
+                }
 
-                vm.filename = splited_path[splited_path.length - 1]
                 /*
                                             document.body.style.fontFamily = '"Cosmos Logic"';
                 */
@@ -192,7 +221,7 @@ export default {
         control_modal: function (modal) {
             let shade = document.getElementById("shade");
 
-            if (modal == 'config') {
+            if (modal === 'config') {
                 let modal_config = document.getElementById("config");
                 if (modal_config.classList.contains('hide')) {
                     modal_config.classList.remove('hide')
@@ -213,25 +242,41 @@ export default {
         toggle_windowMaximize: function (event) {
             appWindow.toggleMaximize();
             this.$data.maximized = !this.$data.maximized
-            alert(this.$data.maximized)
 
         },
         minimize_window: function () {
             appWindow.minimize();
+
         },
         set_preview_height: function () {
             this.style.height = "auto";
             this.style.height = `${this.scrollHeight}px`;
         },
-        pinWindow: function () {
-            if (this.$data.pinned == false) {
-                appWindow.setAlwaysOnTop(true);
+        pinWindow: async function () {
+            const factor = appWindow.scaleFactor()
+            let container = document.getElementById("container")
+
+            if (!this.$data.pinned) {
+                await appWindow.setAlwaysOnTop(true);
                 this.$data.pinned = true;
+                if (!this.$data.maximized) {
 
-
+                }
+                container.classList.add("is_pinned")
+                const size = (await appWindow.innerSize()).toLogical(await factor);
+                const pos = (await appWindow.innerPosition()).toLogical(await factor);
+                console.log(size);
+                await appWindow.setSize(new LogicalSize(size.width + 20, size.height + 20));
+                await appWindow.setPosition(new LogicalPosition(pos.x - 10, pos.y - 10))
             } else {
-                appWindow.setAlwaysOnTop(false);
+                container.classList.remove("is_pinned")
+                await appWindow.setAlwaysOnTop(false);
                 this.$data.pinned = false;
+                const size = (await appWindow.innerSize()).toLogical(await factor);
+                const pos = (await appWindow.innerPosition()).toLogical(await factor);
+                console.log(size);
+                await appWindow.setSize(new LogicalSize(size.width - 20, size.height - 20));
+                await appWindow.setPosition(new LogicalPosition(pos.x + 10, pos.y + 10))
             }
         },
         openSidebar: function (event) {
@@ -252,6 +297,20 @@ export default {
 <style scoped>
 
 @import "stylesheets/default.css";
+
+#blank_view {
+    grid-column: 1/3;
+    grid-row: 2/3;
+}
+
+#blank_message {
+    margin: auto;
+    width: 300px;
+    height: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3em;
+}
 
 #b_close {
     grid-column: 6/7;
@@ -279,10 +338,12 @@ export default {
     grid-row: 1/2;
 }
 
-/*#container.is_pinned{
-    border: solid 4px #3d54ff;
-    border-radius: 7px;
-}*/
+#container.is_pinned {
+    border: solid 7px #3d54ff;
+    border-radius: 10px;
+    padding: -10px 2px 2px 2px;
+
+}
 
 #b_minimize {
     grid-column: 4/5;
@@ -463,5 +524,26 @@ export default {
     'wght' 900,
     'GRAD' 0,
     'opsz' 48
+}
+
+.font_description {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 1fr;
+}
+
+.font_size_control{
+
+    margin: 5px;
+    padding: 5px;
+}
+
+.p_size {
+    display: inline-block;
+    font-weight: bold;
+
+}
+.range {
+    margin: 5px 0px 5px 5px
 }
 </style>

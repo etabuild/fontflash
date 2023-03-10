@@ -19,7 +19,7 @@ use std::io::BufRead;
 use rusttype::{Font};
 use tauri::api::dir::is_dir;
 
-use serde::{ Serialize, Deserialize };
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct FileData {
@@ -48,8 +48,8 @@ fn get_data() -> FileData {
     let mut dir_list: Vec<String> = vec![];
     let mut path = "";
     if args.len() == 1 {
-        path = r"C:\Users\ym174\Desktop\TBGoStdR-C6.otf";
-        println!("ok");
+        /*        path = r"C:\Users\ym174\Desktop\TBGoStdR-C6.otf";
+        */        println!("ok");
     } else {
         path = &*args[1];
     }
@@ -98,6 +98,10 @@ fn main() {
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             set_shadow(&window, true).expect("Unsupported platform!");
+            // 最小化されてる場合は解除。
+            window.unminimize().expect("Failed to un-minimize!");
+            // フォーカスを有効にする。
+            window.set_focus().expect("Failed to set-on-top");
             Ok(())
         })
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
