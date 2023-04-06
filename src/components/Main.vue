@@ -85,8 +85,11 @@
 
             <div class="font_description">
                 <p id="family-name">{{ familyName }}</p>
+                <div id="font-info">
+                    <p id="control-font-weight" v-if="hasWeight">{{fontWeight}}</p>
+                    <p id="filename">{{filename}}</p>
+                </div>
 
-                <p id="filename">{{filename}}</p>
 
                 <div class="font_size_control">
                     <p class="p_size">{{ fontsize }}</p>
@@ -130,6 +133,7 @@ export default {
             familyName: 'Failed to load the family-name',
             filename: 'Failed to load the font-path',
             factor: null,
+            hasWeight: true,
             isinput: true,
             args: [],
             fontt: null,
@@ -138,13 +142,14 @@ export default {
             fs: null,
             isOpenSidebar: false,
             maximized: false,
-            preview_fontsize_rate: [50],
-            invoke: null
+            preview_fontsize_rate: [11],
+            invoke: null,
+            fontWeight: "000(ExtraBold)"
         }
     },
     computed: {
         fontsize: function () {
-            return Math.round(this.preview_fontsize_rate[0] * 1.4) + 'pt'
+            return Math.round(this.preview_fontsize_rate[0] * 1.4) + 10 + 'pt'
         }
     },
     mounted: async function () {
@@ -183,11 +188,12 @@ export default {
 
         async function instanceDetectionLister() {
             await listen('instance_detection', event => {
-                console.log(`instance_detection ${event.payload} ${new Date()}`)
+                console.log(`instance_detection ${event.payload}`)
                 vm.isSelected = true
                 console.log(event.payload)
                 if(event.payload.has_patharg){
-                    a.load_font(vm, event.payload.filepath)
+                    console.log(event.payload)
+                    a.loadFont(vm, event.payload)
                 }else{
                     alert('Un-supported file!! \n Extension may be wrong. Please rename it.')
                 }
@@ -204,23 +210,20 @@ export default {
         loadPreviewWhenDebug: function () {
             let a = this
             let vm = this.$data
-            this.$data.invoke('get_data', {path:"C:\\Users\\ym174\\Desktop\\A-OTF-AntiqueStd-AN3.otf"}).then(function(data){
+            this.$data.invoke('get_data', {path:"C:\\Windows\\Fonts\\yumin.ttf"}).then(function(data){
 
                 console.log(data)
 
                 if (data.has_patharg) {
 
-                    a.load_font(vm, data.filepath)
+                    a.loadFont(vm, data)
                     vm.isSelected = true
                 } else {
                 }
 
             })
         },
-        changePreviewFontSize: function (num) {
-            console.log("preview" + num)
-            document.getElementById("preview" + num).style.fontSize = Math.round(this.preview_fontsize_rate[num] * 1.4) + "pt";
-        },
+
         getArgs: function () {
             this.$data.isinput = false;
             this.$data.invoke('get_args', {}).then(function(data){
@@ -229,7 +232,7 @@ export default {
 
                 if (data.has_patharg) {
 
-                    a.load_font(vm, data.filepath)
+                    a.loadFont(vm, data)
                     vm.isSelected = true
                 } else {
                 }
@@ -243,26 +246,31 @@ export default {
 
 
 
-        load_font: function (vm, path) {
+        loadFont: function (vm, fontdata) {
             /*
                         document.fonts.delete(vm.fontt)
             */
-            console.log(metadata(path))
-
-            vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
+            console.log(metadata(fontdata.filepath))
+            vm.familyName = fontdata.font_name[0]
+            if(fontdata.fontWeight!==0){
+                vm.fontWeight = fontdata.font_weight;
+            }else{
+                vm.hasWeight = false;
+            }
+            vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(fontdata.filepath) + ")")
             vm.fontt.load().then(function (loaded_face) {
                 /// フォント読み込み成功
                 /// body要素全体にそれを適用する
                 document.fonts.add(loaded_face);
-                if (path !== null) {
-                    let splited_path = path.split('\\')
+                if (fontdata.filepath !== null) {
+                    let splited_path = fontdata.filepath.split('\\')
                     vm.filename = splited_path[splited_path.length - 1]
                 }
 
 
             }).catch(function (e) {
                 /// フォント読み込み失敗
-                console.log(path)
+                console.log(fontdata.filepath)
                 alert('Failed to load font');
                 vm.message = 'フォントの読み込みに失敗';
             });
@@ -376,6 +384,22 @@ export default {
     font-weight: bold;
     font-size: 1.3em;
     line-height: 90vh;
+}
+
+
+#filename {
+    display: inline-block;
+    padding: 0px 4px;
+
+}
+
+#control-font-weight{
+    background: #20ffaa;
+    color: #000;
+    padding: 2px 7px;
+    width: auto;
+    display: inline-block;
+    border-radius: 6px;
 }
 
 #b_close {
@@ -521,6 +545,7 @@ export default {
 #viewer {
     grid-column: 2/3;
     grid-row: 2/3;
+    gap: 10px;
     background: #eaeaea;
     /*
     border: solid 1px #969696;
@@ -532,6 +557,10 @@ export default {
     display: grid;
     grid-template-rows: 70px 1fr 70px;
 
+}
+#font-info{
+    grid-column: 1/2;
+    grid-row: 2/3
 }
 
 #sidebar {
@@ -602,7 +631,7 @@ export default {
 .font_description {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: 1fr;
+    grid-template-rows: 2fr 1fr;
 }
 
 .font_size_control {
