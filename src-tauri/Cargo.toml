@@ -14,12 +14,14 @@ rust-version = "1.57"
 tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
-rusttype = "0.9.2"
+fonttools = "0.1.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2", features = ["api-all"] }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plugin-single-instance" }
 window-shadows = { git = "https://github.com/tauri-apps/window-shadows" }
+tauri-plugin-fs-extra = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+ttf-parser = "0.18.1"
 
 
 [features]

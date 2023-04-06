@@ -2,31 +2,31 @@
     <div id="config" class="modal hide">
         <button class="materialicon icon" @click="control_modal('config')" id="b_modalcontrol">close</button>
     </div>
-    <div data-tauri-drag-region id="shade" class="hide"></div>
+    <div data-tauri-drag-region id="shade" @mousedown="maximizeFromTitlebar($event)" class="hide"></div>
 
-    <div id="container" class="" @select="block_select">
+    <div id="container" ref="container" class="" @select="block_select">
 
         <div id="toolbar">
             <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname">FontFlash</p>
             <button id="b_close" @click="close_window()" class="icon win_control">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="m4.397 4.554.073-.084a.75.75 0 0 1 .976-.073l.084.073L12 10.939l6.47-6.47a.75.75 0 1 1 1.06 1.061L13.061 12l6.47 6.47a.75.75 0 0 1 .072.976l-.073.084a.75.75 0 0 1-.976.073l-.084-.073L12 13.061l-6.47 6.47a.75.75 0 0 1-1.06-1.061L10.939 12l-6.47-6.47a.75.75 0 0 1-.072-.976l.073-.084-.073.084Z"
-                        fill="#212121"/>
+                            d="m4.397 4.554.073-.084a.75.75 0 0 1 .976-.073l.084.073L12 10.939l6.47-6.47a.75.75 0 1 1 1.06 1.061L13.061 12l6.47 6.47a.75.75 0 0 1 .072.976l-.073.084a.75.75 0 0 1-.976.073l-.084-.073L12 13.061l-6.47 6.47a.75.75 0 0 1-1.06-1.061L10.939 12l-6.47-6.47a.75.75 0 0 1-.072-.976l.073-.084-.073.084Z"
+                            fill="#212121"/>
                 </svg>
             </button>
             <button id="b_maximize" @click="toggle_windowMaximize($event)" class="icon win_control">
                 <svg v-if="!maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
                      xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="M5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75A2.75 2.75 0 0 1 5.75 3Zm0 1.5c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25H5.75Z"
-                        fill="#212121"/>
+                            d="M5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75A2.75 2.75 0 0 1 5.75 3Zm0 1.5c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25H5.75Z"
+                            fill="#212121"/>
                 </svg>
                 <svg v-if="maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
                      xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="M7.518 5H6.009a3.25 3.25 0 0 1 3.24-3h8.001A4.75 4.75 0 0 1 22 6.75v8a3.25 3.25 0 0 1-3 3.24v-1.508a1.75 1.75 0 0 0 1.5-1.732v-8a3.25 3.25 0 0 0-3.25-3.25h-8A1.75 1.75 0 0 0 7.518 5ZM5.25 6A3.25 3.25 0 0 0 2 9.25v9.5A3.25 3.25 0 0 0 5.25 22h9.5A3.25 3.25 0 0 0 18 18.75v-9.5A3.25 3.25 0 0 0 14.75 6h-9.5ZM3.5 9.25c0-.966.784-1.75 1.75-1.75h9.5c.967 0 1.75.784 1.75 1.75v9.5a1.75 1.75 0 0 1-1.75 1.75h-9.5a1.75 1.75 0 0 1-1.75-1.75v-9.5Z"
-                        fill="#212121"/>
+                            d="M7.518 5H6.009a3.25 3.25 0 0 1 3.24-3h8.001A4.75 4.75 0 0 1 22 6.75v8a3.25 3.25 0 0 1-3 3.24v-1.508a1.75 1.75 0 0 0 1.5-1.732v-8a3.25 3.25 0 0 0-3.25-3.25h-8A1.75 1.75 0 0 0 7.518 5ZM5.25 6A3.25 3.25 0 0 0 2 9.25v9.5A3.25 3.25 0 0 0 5.25 22h9.5A3.25 3.25 0 0 0 18 18.75v-9.5A3.25 3.25 0 0 0 14.75 6h-9.5ZM3.5 9.25c0-.966.784-1.75 1.75-1.75h9.5c.967 0 1.75.784 1.75 1.75v9.5a1.75 1.75 0 0 1-1.75 1.75h-9.5a1.75 1.75 0 0 1-1.75-1.75v-9.5Z"
+                            fill="#212121"/>
                 </svg>
             </button>
 
@@ -39,63 +39,73 @@
             <button id="b_setting" @click="control_modal('config')" class="materialicon icon">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="M12.012 2.25c.734.008 1.465.093 2.182.253a.75.75 0 0 1 .582.649l.17 1.527a1.384 1.384 0 0 0 1.927 1.116l1.401-.615a.75.75 0 0 1 .85.174 9.792 9.792 0 0 1 2.204 3.792.75.75 0 0 1-.271.825l-1.242.916a1.381 1.381 0 0 0 0 2.226l1.243.915a.75.75 0 0 1 .272.826 9.797 9.797 0 0 1-2.204 3.792.75.75 0 0 1-.848.175l-1.407-.617a1.38 1.38 0 0 0-1.926 1.114l-.169 1.526a.75.75 0 0 1-.572.647 9.518 9.518 0 0 1-4.406 0 .75.75 0 0 1-.572-.647l-.168-1.524a1.382 1.382 0 0 0-1.926-1.11l-1.406.616a.75.75 0 0 1-.849-.175 9.798 9.798 0 0 1-2.204-3.796.75.75 0 0 1 .272-.826l1.243-.916a1.38 1.38 0 0 0 0-2.226l-1.243-.914a.75.75 0 0 1-.271-.826 9.793 9.793 0 0 1 2.204-3.792.75.75 0 0 1 .85-.174l1.4.615a1.387 1.387 0 0 0 1.93-1.118l.17-1.526a.75.75 0 0 1 .583-.65c.717-.159 1.45-.243 2.201-.252Zm0 1.5a9.135 9.135 0 0 0-1.354.117l-.109.977A2.886 2.886 0 0 1 6.525 7.17l-.898-.394a8.293 8.293 0 0 0-1.348 2.317l.798.587a2.881 2.881 0 0 1 0 4.643l-.799.588c.32.842.776 1.626 1.348 2.322l.905-.397a2.882 2.882 0 0 1 4.017 2.318l.11.984c.889.15 1.798.15 2.687 0l.11-.984a2.881 2.881 0 0 1 4.018-2.322l.905.396a8.296 8.296 0 0 0 1.347-2.318l-.798-.588a2.881 2.881 0 0 1 0-4.643l.796-.587a8.293 8.293 0 0 0-1.348-2.317l-.896.393a2.884 2.884 0 0 1-4.023-2.324l-.11-.976a8.988 8.988 0 0 0-1.333-.117ZM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5Zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"
-                        fill="#212121"/>
+                            d="M12.012 2.25c.734.008 1.465.093 2.182.253a.75.75 0 0 1 .582.649l.17 1.527a1.384 1.384 0 0 0 1.927 1.116l1.401-.615a.75.75 0 0 1 .85.174 9.792 9.792 0 0 1 2.204 3.792.75.75 0 0 1-.271.825l-1.242.916a1.381 1.381 0 0 0 0 2.226l1.243.915a.75.75 0 0 1 .272.826 9.797 9.797 0 0 1-2.204 3.792.75.75 0 0 1-.848.175l-1.407-.617a1.38 1.38 0 0 0-1.926 1.114l-.169 1.526a.75.75 0 0 1-.572.647 9.518 9.518 0 0 1-4.406 0 .75.75 0 0 1-.572-.647l-.168-1.524a1.382 1.382 0 0 0-1.926-1.11l-1.406.616a.75.75 0 0 1-.849-.175 9.798 9.798 0 0 1-2.204-3.796.75.75 0 0 1 .272-.826l1.243-.916a1.38 1.38 0 0 0 0-2.226l-1.243-.914a.75.75 0 0 1-.271-.826 9.793 9.793 0 0 1 2.204-3.792.75.75 0 0 1 .85-.174l1.4.615a1.387 1.387 0 0 0 1.93-1.118l.17-1.526a.75.75 0 0 1 .583-.65c.717-.159 1.45-.243 2.201-.252Zm0 1.5a9.135 9.135 0 0 0-1.354.117l-.109.977A2.886 2.886 0 0 1 6.525 7.17l-.898-.394a8.293 8.293 0 0 0-1.348 2.317l.798.587a2.881 2.881 0 0 1 0 4.643l-.799.588c.32.842.776 1.626 1.348 2.322l.905-.397a2.882 2.882 0 0 1 4.017 2.318l.11.984c.889.15 1.798.15 2.687 0l.11-.984a2.881 2.881 0 0 1 4.018-2.322l.905.396a8.296 8.296 0 0 0 1.347-2.318l-.798-.588a2.881 2.881 0 0 1 0-4.643l.796-.587a8.293 8.293 0 0 0-1.348-2.317l-.896.393a2.884 2.884 0 0 1-4.023-2.324l-.11-.976a8.988 8.988 0 0 0-1.333-.117ZM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5Zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"
+                            fill="#212121"/>
                 </svg>
             </button>
 
-            <button id="b_pin" v-if="pinned===false" @click="pinWindow()" class="materialicon icon">
+            <button id="b_pin" v-if="!pinned" @click="pinWindow()" class="materialicon icon">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="m16.242 2.932 4.826 4.826a2.75 2.75 0 0 1-.715 4.404l-4.87 2.435a.75.75 0 0 0-.374.426l-1.44 4.166a1.25 1.25 0 0 1-2.065.476L8.5 16.561 4.06 21H3v-1.06l4.44-4.44-3.105-3.104a1.25 1.25 0 0 1 .476-2.066l4.166-1.44a.75.75 0 0 0 .426-.373l2.435-4.87a2.75 2.75 0 0 1 4.405-.715Zm3.766 5.886-4.826-4.826a1.25 1.25 0 0 0-2.002.325l-2.435 4.871a2.25 2.25 0 0 1-1.278 1.12l-3.789 1.31 6.705 6.704 1.308-3.789a2.25 2.25 0 0 1 1.12-1.277l4.872-2.436a1.25 1.25 0 0 0 .325-2.002Z"
-                        fill="#212121"/>
+                            d="m16.242 2.932 4.826 4.826a2.75 2.75 0 0 1-.715 4.404l-4.87 2.435a.75.75 0 0 0-.374.426l-1.44 4.166a1.25 1.25 0 0 1-2.065.476L8.5 16.561 4.06 21H3v-1.06l4.44-4.44-3.105-3.104a1.25 1.25 0 0 1 .476-2.066l4.166-1.44a.75.75 0 0 0 .426-.373l2.435-4.87a2.75 2.75 0 0 1 4.405-.715Zm3.766 5.886-4.826-4.826a1.25 1.25 0 0 0-2.002.325l-2.435 4.871a2.25 2.25 0 0 1-1.278 1.12l-3.789 1.31 6.705 6.704 1.308-3.789a2.25 2.25 0 0 1 1.12-1.277l4.872-2.436a1.25 1.25 0 0 0 .325-2.002Z"
+                            fill="#212121"/>
                 </svg>
             </button>
-            <button id="b_pin" v-if="pinned===true" @click="pinWindow()" class="materialicon icon filled">
+            <button id="b_pin" v-if="pinned" @click="pinWindow()" class="materialicon icon filled">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="m21.068 7.758-4.826-4.826a2.75 2.75 0 0 0-4.404.715l-2.435 4.87a.75.75 0 0 1-.426.374L4.81 10.33a1.25 1.25 0 0 0-.476 2.065L7.439 15.5 3 19.94V21h1.06l4.44-4.44 3.104 3.105a1.25 1.25 0 0 0 2.066-.476l1.44-4.166a.75.75 0 0 1 .373-.426l4.87-2.435a2.75 2.75 0 0 0 .715-4.404Z"
-                        fill="#212121"/>
+                            d="m21.068 7.758-4.826-4.826a2.75 2.75 0 0 0-4.404.715l-2.435 4.87a.75.75 0 0 1-.426.374L4.81 10.33a1.25 1.25 0 0 0-.476 2.065L7.439 15.5 3 19.94V21h1.06l4.44-4.44 3.104 3.105a1.25 1.25 0 0 0 2.066-.476l1.44-4.166a.75.75 0 0 1 .373-.426l4.87-2.435a2.75 2.75 0 0 0 .715-4.404Z"
+                            fill="#3d54ff"/>
                 </svg>
             </button>
 
         </div>
         <div v-if="isSelected" id="sidebar">
+            <div id="sidebar-content" v-if="isOpenSidebar">
+                <div class="content" v-if="true">
+                    <input type="text" id="path_field">
+                    <button id="path_loadbutton" class="materialicon" @click="loadDirFiles">
+                        cloud_upload
+                    </button>
+                </div>
+            </div>
             <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        d="M8.207 4c.46 0 .908.141 1.284.402l.156.12L12.022 6.5h7.728a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Zm1.44 5.979a2.25 2.25 0 0 1-1.244.512l-.196.009-4.707-.001v7.251c0 .38.282.694.648.743l.102.007h15.5a.75.75 0 0 0 .743-.648l.007-.102v-9a.75.75 0 0 0-.648-.743L19.75 8h-7.729L9.647 9.979ZM8.207 5.5H4.25a.75.75 0 0 0-.743.648L3.5 6.25v2.749L8.207 9a.75.75 0 0 0 .395-.113l.085-.06 1.891-1.578-1.89-1.575a.75.75 0 0 0-.377-.167L8.207 5.5Z"
-                        fill="#212121"/>
+                            d="M8.207 4c.46 0 .908.141 1.284.402l.156.12L12.022 6.5h7.728a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Zm1.44 5.979a2.25 2.25 0 0 1-1.244.512l-.196.009-4.707-.001v7.251c0 .38.282.694.648.743l.102.007h15.5a.75.75 0 0 0 .743-.648l.007-.102v-9a.75.75 0 0 0-.648-.743L19.75 8h-7.729L9.647 9.979ZM8.207 5.5H4.25a.75.75 0 0 0-.743.648L3.5 6.25v2.749L8.207 9a.75.75 0 0 0 .395-.113l.085-.06 1.891-1.578-1.89-1.575a.75.75 0 0 0-.377-.167L8.207 5.5Z"
+                            fill="#212121"/>
                 </svg>
                 <!--
                                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.821 6.5h5.929a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75v-7.251l6.207.001.196-.009a2.25 2.25 0 0 0 1.088-.393l.156-.12L13.821 6.5ZM8.207 4c.46 0 .908.141 1.284.402l.156.12 2.103 1.751-3.063 2.553-.085.061a.75.75 0 0 1-.29.106L8.206 9 2 8.999V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Z" fill="#212121"/></svg>
                 -->
             </button>
-            <div class="content" v-if="isOpenSidebar">
-                <input type="text" id="path_field">
-                <button id="path_loadbutton" class="materialicon">
-                    cloud_upload
-                </button>
-            </div>
+
         </div>
         <div v-if="isSelected" id="viewer">
 
             <div class="font_description">
-                <p id="filename">{{ filename }}</p>
+                <p id="family-name">{{ familyName }}</p>
+
+                <p id="filename">{{filename}}</p>
+
                 <div class="font_size_control">
-                    <p class="p_size">{{previewFontSize}}</p>
-                    <input class="range" type="range">
+                    <p class="p_size">{{ fontsize }}</p>
+                    <input class="range" id="range_fontsize_1"
+                           v-model.number="preview_fontsize_rate[0]" @change="console.log(fontsize)" type="range"/>
                 </div>
             </div>
-            <textarea @input="set_preview_height"
-                      class="preview">あのイーハトーヴォのすきとおった風、夏でも底にrrrrr冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
-
-            <p id="message">{{ message }}</p>
-            <p id="path">{{ args }}</p>
+            <div id="preview_area">
+            <textarea @input="set_preview_height" id="preview0" :style="{fontSize: fontsize}"
+                      class="preview">あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
+            </div>
+            <div id="footer_area">
+                <p id="message">{{ message }}</p>
+                <p id="path">{{ args }}</p></div>
         </div>
         <div id="blank_view" v-if="!isSelected">
             <p id="blank_message">ファイルを開いてね☆</p>
         </div>
+
     </div>
 
 </template>
@@ -104,14 +114,21 @@
 import {convertFileSrc} from '@tauri-apps/api/tauri';
 import {emit, listen} from '@tauri-apps/api/event'
 import {appWindow, LogicalPosition, LogicalSize} from '@tauri-apps/api/window'
+import {metadata} from "tauri-plugin-fs-extra-api";
+import {readDir, BaseDirectory} from '@tauri-apps/api/fs';
+import {resolveResource} from '@tauri-apps/api/path'
+import {readTextFile} from '@tauri-apps/api/fs'
 
 export default {
     name: "Main.vue",
+    components: {
+    },
     data() {
         return {
             previewFontSize: "1.3em",
             isSelected: false,
-            filename: 'ssss',
+            familyName: 'Failed to load the family-name',
+            filename: 'Failed to load the font-path',
             factor: null,
             isinput: true,
             args: [],
@@ -120,102 +137,134 @@ export default {
             pinned: false,
             fs: null,
             isOpenSidebar: false,
-            maximized: false
+            maximized: false,
+            preview_fontsize_rate: [50],
+            invoke: null
         }
     },
-    mounted: function () {
+    computed: {
+        fontsize: function () {
+            return Math.round(this.preview_fontsize_rate[0] * 1.4) + 'pt'
+        }
+    },
+    mounted: async function () {
+        this.$data.invoke = window.__TAURI__.invoke
         appWindow.isMaximized().then((isMaximized) => {
             if (isMaximized) {
+                console.log('maximized(When app has launched)')
                 this.$data.maximized = true
             }
         })
-        /*        const path = process.cwd();
-        // ファイル名の一覧
-                const filenames = fs.readdirSync(convertFileSrc(path));
-                console.log(filenames);*/
         this.$data.factor = appWindow.scaleFactor()
-        console.log('aa');
+
         this.getArgs();
-        let unlisten;
-        var a = this
-        var vm = this.$data
+        let a = this
+        let vm = this.$data
+
+        function setMaximizeIcon() {
+            appWindow.isMaximized().then((isMaximized) => {
+                if (isMaximized) {
+                    if(vm.pinned){
+                        this.$refs.container.classList.remove("is_pinned")
+                        appWindow.setAlwaysOnTop(false);
+                        vm.pinned = false
+                    }
+                    //console.log('maximized')
+                    vm.maximized = true
+                } else {
+                    //console.log('unMaximized')
+                    vm.maximized = false
+                }
+            })
+
+        }
+
+        setInterval(setMaximizeIcon, 500)
 
         async function instanceDetectionLister() {
-            unlisten = await listen('instance_detection', event => {
+            await listen('instance_detection', event => {
                 console.log(`instance_detection ${event.payload} ${new Date()}`)
                 vm.isSelected = true
-
-                a.load_font(vm, event.payload.split(","))
+                console.log(event.payload)
+                if(event.payload.has_patharg){
+                    a.load_font(vm, event.payload.filepath)
+                }else{
+                    alert('Un-supported file!! \n Extension may be wrong. Please rename it.')
+                }
             });
         }
 
         instanceDetectionLister()
 
-
+        console.log('Finished initializing');
+        this.loadPreviewWhenDebug()
     },
     methods: {
+
+        loadPreviewWhenDebug: function () {
+            let a = this
+            let vm = this.$data
+            this.$data.invoke('get_data', {path:"C:\\Users\\ym174\\Desktop\\A-OTF-AntiqueStd-AN3.otf"}).then(function(data){
+
+                console.log(data)
+
+                if (data.has_patharg) {
+
+                    a.load_font(vm, data.filepath)
+                    vm.isSelected = true
+                } else {
+                }
+
+            })
+        },
+        changePreviewFontSize: function (num) {
+            console.log("preview" + num)
+            document.getElementById("preview" + num).style.fontSize = Math.round(this.preview_fontsize_rate[num] * 1.4) + "pt";
+        },
         getArgs: function () {
             this.$data.isinput = false;
-            let invoke = window.__TAURI__.invoke
+            this.$data.invoke('get_args', {}).then(function(data){
+                let args = data.args;
+                console.log(data)
 
+                if (data.has_patharg) {
+
+                    a.load_font(vm, data.filepath)
+                    vm.isSelected = true
+                } else {
+                }
+
+            })
             console.log('!')
             let vm = this.$data
             let a = this
-            /*           invoke('get_args', {})
-                           .then(function (rustMsg) {
-
-                               var args = rustMsg.split(",")
-                               if (args[1] != null) {
-                                   console.log(args[1])
-                               } else {
-                                   args[1] = "C:\\Users\\ym174\\OneDrive\\デスクトップ\\TBGoStdR-C6.otf"
-                               }
-                               a.load_font(vm, args)
-
-
-                           }).catch(function (e) {
-                           alert(e)
-                       })// 戻り値を表示*/
-
-            invoke('get_data', {}).then(function (data) {
-                let args = data.args;
-                console.log(args)
-
-                if (typeof args[1] !== "undefined") {
-
-                    a.load_font(vm, args)
-                    vm.isSelected = true
-                } else {
-                    /*
-                                        vm.isSelected = true
-                    */
-
-                }
-            }).catch(function (e) {
-                alert(e)
-            })
         },
-        load_font: function (vm, args) {
+
+
+
+
+        load_font: function (vm, path) {
             /*
                         document.fonts.delete(vm.fontt)
             */
-            vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(args[1]) + ")")
+            console.log(metadata(path))
+
+            vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
             vm.fontt.load().then(function (loaded_face) {
                 /// フォント読み込み成功
                 /// body要素全体にそれを適用する
                 document.fonts.add(loaded_face);
-                if (args[1] !== null) {
-                    let splited_path = args[1].split('\\')
+                if (path !== null) {
+                    let splited_path = path.split('\\')
                     vm.filename = splited_path[splited_path.length - 1]
                 }
 
-                /*
-                                            document.body.style.fontFamily = '"Cosmos Logic"';
-                */
+
             }).catch(function (e) {
                 /// フォント読み込み失敗
+                console.log(path)
                 alert('Failed to load font');
-                vm.message = '読み込めんかった';
+                vm.message = 'フォントの読み込みに失敗';
             });
         },
         control_modal: function (modal) {
@@ -274,18 +323,27 @@ export default {
                 this.$data.pinned = false;
                 const size = (await appWindow.innerSize()).toLogical(await factor);
                 const pos = (await appWindow.innerPosition()).toLogical(await factor);
-                console.log(size);
                 await appWindow.setSize(new LogicalSize(size.width - 20, size.height - 20));
                 await appWindow.setPosition(new LogicalPosition(pos.x + 10, pos.y + 10))
             }
         },
+        loadDirFiles: async function (path) {
+            /*
+                        let inputDir = path.split('\\')[path.split('\\').length-1]
+            */
+            var fileList = await readDir('users', {dir: convertFileSrc(BaseDirectory.AppData), recursive: true});
+            console.log(fileList)
+        },
         openSidebar: function (event) {
+            this.isOpenSidebar = !this.isOpenSidebar
             console.log(event)
-            event.target.style.backgroundColor = "#7d8dff"
-            event.target.style.color = "#fff"
 
-            event.target.children[0].style.display = "block"
+            if (event.target.closest("#container").classList.contains("sidebar-open")) {
+                event.target.closest("#container").classList.remove("sidebar-open")
 
+            } else {
+                event.target.closest("#container").classList.add("sidebar-open");
+            }
         }
 
 
@@ -299,9 +357,16 @@ export default {
 @import "stylesheets/default.css";
 
 #blank_view {
-    grid-column: 1/3;
+    grid-column: 1/4;
     grid-row: 2/3;
 }
+
+#sidebar-content {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    background-color: #eaeaea
+}
+
 
 #blank_message {
     margin: auto;
@@ -310,6 +375,7 @@ export default {
     text-align: center;
     font-weight: bold;
     font-size: 1.3em;
+    line-height: 90vh;
 }
 
 #b_close {
@@ -398,17 +464,19 @@ export default {
 .preview {
     border: none;
     resize: none;
-    font-size: 2em;
+    /*
+    font-size: 400pt;
+    */
     font-family: 'LoadedFont';
     margin: 5px;
     background: none;
     width: calc(100% - 10px);
     line-height: 1.2;
-    overflow: hidden;
+    overflow: scroll;
     background: #f3f3f3;
     border-radius: 10px;
     padding: 10px;
-    height: 10em;
+    height: 90%;
 
 }
 
@@ -417,7 +485,7 @@ export default {
     background: #000;
 }
 
-#filename {
+#family-name {
     font-weight: 600;
     color: #000;
     font-size: 1.8em;
@@ -425,7 +493,7 @@ export default {
 }
 
 #toolbar {
-    grid-column: 1/3;
+    grid-column: 1/4;
     grid-row: 1/2;
     /*
     background: #fff;
@@ -461,6 +529,8 @@ export default {
     border-radius: 0px 8px 8px 0px;
     overflow-y: scroll;
     overflow-x: hidden;
+    display: grid;
+    grid-template-rows: 70px 1fr 70px;
 
 }
 
@@ -486,7 +556,7 @@ export default {
     */
     padding: 0px 12px 12px 12px;
     background: #dcdcdc;
-
+    overflow-y: auto;
     /*
     border-radius: 10px;
     */
@@ -496,6 +566,9 @@ export default {
 
 }
 
+#container.sidebar-open {
+    grid-template-columns: 200px 1fr;
+}
 
 #path_loadbutton {
 }
@@ -532,7 +605,7 @@ export default {
     grid-template-rows: 1fr;
 }
 
-.font_size_control{
+.font_size_control {
 
     margin: 5px;
     padding: 5px;
@@ -543,6 +616,7 @@ export default {
     font-weight: bold;
 
 }
+
 .range {
     margin: 5px 0px 5px 5px
 }

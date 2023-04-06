@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "python run_on_build.py 0.0.2",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": true
@@ -15,6 +15,9 @@
       "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "allowlist": {
+      "fs": {
+        "scope": ["$RESOURCE/*"]
+      },
       "all": true,
       "protocol": {
         "asset": true,
@@ -34,6 +37,9 @@
       "deb": {
         "depends": []
       },
+      "resources": [
+        "../src/data/version.json"
+      ],
       "externalBin": [],
       "icon": [
         "icons/32x32.png",
@@ -42,7 +48,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "eta.fontfalsh.tauri",
+      "identifier": "eta.fontflash.tauri",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -51,7 +57,6 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
       "shortDescription": "",
       "targets": "all",
       "windows": {
@@ -75,7 +80,9 @@
         "height": 600,
         "resizable": true,
         "title": "fontflash",
-        "width": 800
+        "width": 800,
+        "minWidth": 600,
+        "minHeight": 550
       }
     ]
   }
