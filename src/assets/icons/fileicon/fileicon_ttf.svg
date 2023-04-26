@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.63 105.59">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #2b2b2b;
+        font-family: Bahnschrift-Bold, Bahnschrift;
+        font-size: 86.52px;
+        font-variation-settings: 'wght' 700, 'wdth' 100;
+        font-weight: 700;
+      }
+
+      .cls-2 {
+        fill: #c5efff;
+      }
+    </style>
+  </defs>
+  <g id="_レイヤー_1-2" data-name="レイヤー 1">
+    <rect class="cls-2" width="261.63" height="101" rx="22" ry="22"/>
+    <text class="cls-1" transform="translate(64.97 82.19)"><tspan x="0" y="0">TTF</tspan></text>
+  </g>
+</svg>

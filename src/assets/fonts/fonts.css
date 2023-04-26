@@ -22,3 +22,8 @@
     font-weight: 700;
 }
 
+@font-face {
+    font-family: 'LoadedFont';
+    src: url('LastResort-Regular.ttf')
+}
+

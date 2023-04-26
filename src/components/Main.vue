@@ -61,24 +61,32 @@
 
         </div>
         <div v-if="isSelected" id="sidebar">
+            <div id="sidebar-icons">
+                <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                                d="M8.207 4c.46 0 .908.141 1.284.402l.156.12L12.022 6.5h7.728a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Zm1.44 5.979a2.25 2.25 0 0 1-1.244.512l-.196.009-4.707-.001v7.251c0 .38.282.694.648.743l.102.007h15.5a.75.75 0 0 0 .743-.648l.007-.102v-9a.75.75 0 0 0-.648-.743L19.75 8h-7.729L9.647 9.979ZM8.207 5.5H4.25a.75.75 0 0 0-.743.648L3.5 6.25v2.749L8.207 9a.75.75 0 0 0 .395-.113l.085-.06 1.891-1.578-1.89-1.575a.75.75 0 0 0-.377-.167L8.207 5.5Z"
+                                fill="#212121"/>
+                    </svg>
+                    <!--
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.821 6.5h5.929a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75v-7.251l6.207.001.196-.009a2.25 2.25 0 0 0 1.088-.393l.156-.12L13.821 6.5ZM8.207 4c.46 0 .908.141 1.284.402l.156.12 2.103 1.751-3.063 2.553-.085.061a.75.75 0 0 1-.29.106L8.206 9 2 8.999V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Z" fill="#212121"/></svg>
+                    -->
+                </button>
+            </div>
+
             <div id="sidebar-content" v-if="isOpenSidebar">
-                <div class="content" v-if="true">
-                    <input type="text" id="path_field">
+                <div class="content"  v-if="true">
                     <button id="path_loadbutton" class="materialicon" @click="loadDirFiles">
                         cloud_upload
                     </button>
+                    <div id="folder-viewer">
+                        <div class="dir-file" v-for="filename in dirList">
+                            <img class="file-icon" src="../assets/icons/fileicon/fileicon_ttf.svg"><p class="label-filename">{{ filename }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
-                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                            d="M8.207 4c.46 0 .908.141 1.284.402l.156.12L12.022 6.5h7.728a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Zm1.44 5.979a2.25 2.25 0 0 1-1.244.512l-.196.009-4.707-.001v7.251c0 .38.282.694.648.743l.102.007h15.5a.75.75 0 0 0 .743-.648l.007-.102v-9a.75.75 0 0 0-.648-.743L19.75 8h-7.729L9.647 9.979ZM8.207 5.5H4.25a.75.75 0 0 0-.743.648L3.5 6.25v2.749L8.207 9a.75.75 0 0 0 .395-.113l.085-.06 1.891-1.578-1.89-1.575a.75.75 0 0 0-.377-.167L8.207 5.5Z"
-                            fill="#212121"/>
-                </svg>
-                <!--
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.821 6.5h5.929a2.25 2.25 0 0 1 2.229 1.938l.016.158.005.154v9a2.25 2.25 0 0 1-2.096 2.245L19.75 20H4.25a2.25 2.25 0 0 1-2.245-2.096L2 17.75v-7.251l6.207.001.196-.009a2.25 2.25 0 0 0 1.088-.393l.156-.12L13.821 6.5ZM8.207 4c.46 0 .908.141 1.284.402l.156.12 2.103 1.751-3.063 2.553-.085.061a.75.75 0 0 1-.29.106L8.206 9 2 8.999V6.25a2.25 2.25 0 0 1 2.096-2.245L4.25 4h3.957Z" fill="#212121"/></svg>
-                -->
-            </button>
+
 
         </div>
         <div v-if="isSelected" id="viewer">
@@ -94,7 +102,7 @@
                 <div class="font_size_control">
                     <p class="p_size">{{ fontsize }}</p>
                     <input class="range" id="range_fontsize_1"
-                           v-model.number="preview_fontsize_rate[0]" @change="console.log(fontsize)" type="range"/>
+                           v-model.number="preview_fontsize_rate[0]" type="range"/>
                 </div>
             </div>
             <div id="preview_area">
@@ -121,6 +129,9 @@ import {metadata} from "tauri-plugin-fs-extra-api";
 import {readDir, BaseDirectory} from '@tauri-apps/api/fs';
 import {resolveResource} from '@tauri-apps/api/path'
 import {readTextFile} from '@tauri-apps/api/fs'
+import { open } from '@tauri-apps/api/dialog';
+import { appDir } from '@tauri-apps/api/path';
+
 
 export default {
     name: "Main.vue",
@@ -138,13 +149,14 @@ export default {
             args: [],
             fontt: null,
             message: 'v0.1 tauri',
+            dirList: [],
             pinned: false,
             fs: null,
             isOpenSidebar: false,
             maximized: false,
             preview_fontsize_rate: [11],
             invoke: null,
-            fontWeight: "000(ExtraBold)"
+            fontWeight: "N/A"
         }
     },
     computed: {
@@ -216,7 +228,9 @@ export default {
 
                 if (data.has_patharg) {
 
+/*
                     a.loadFont(vm, data)
+*/
                     vm.isSelected = true
                 } else {
                 }
@@ -244,14 +258,26 @@ export default {
         },
 
 
-
+        displayFontData: function (vm, fontdata) {
+            vm.familyName = fontdata.font_name.join(' | ')
+            if(fontdata.fontWeight!==0){
+                vm.fontWeight = fontdata.font_weight;
+            }else{
+                vm.hasWeight = false;
+            }
+        },
 
         loadFont: function (vm, fontdata) {
             /*
                         document.fonts.delete(vm.fontt)
             */
+            vm.dirList = fontdata.dir_files;
+            if(vm.fontt!==null){
+                document.fonts.delete(vm.fontt);
+
+            }
             console.log(metadata(fontdata.filepath))
-            vm.familyName = fontdata.font_name[0]
+            vm.familyName = fontdata.font_name.join(' | ')
             if(fontdata.fontWeight!==0){
                 vm.fontWeight = fontdata.font_weight;
             }else{
@@ -305,10 +331,10 @@ export default {
             appWindow.minimize();
 
         },
-        set_preview_height: function () {
+/*        set_preview_height: function () {
             this.style.height = "auto";
             this.style.height = `${this.scrollHeight}px`;
-        },
+        },*/
         pinWindow: async function () {
             const factor = appWindow.scaleFactor()
             let container = document.getElementById("container")
@@ -339,8 +365,27 @@ export default {
             /*
                         let inputDir = path.split('\\')[path.split('\\').length-1]
             */
-            var fileList = await readDir('users', {dir: convertFileSrc(BaseDirectory.AppData), recursive: true});
-            console.log(fileList)
+            const selected = await open({
+                directory: true,
+                multiple: false,
+                defaultPath: await appDir(),
+            })
+            if(selected===null){
+                return
+            }
+            console.log(selected+'\\a')
+/*             var fileList = await readDir('users', {dir: convertFileSrc(BaseDirectory.AppData), recursive: true});
+            console.log(fileList) */
+            let docdata = this.$data;
+            this.$data.invoke('get_filelist', {dirpath:selected+'\\'}).then(function(data){
+                if(data!==null){
+                    console.log(data)
+                    docdata.dirList = data;
+                }else{
+                    alert('cancelled')
+                }
+                
+            })
         },
         openSidebar: function (event) {
             this.isOpenSidebar = !this.isOpenSidebar
@@ -371,7 +416,8 @@ export default {
 
 #sidebar-content {
     grid-column: 2/3;
-    grid-row: 2/3;
+    grid-row: 1/2;
+    overflow: hidden;
     background-color: #eaeaea
 }
 
@@ -567,6 +613,9 @@ export default {
     grid-column: 1/2;
     grid-row: 2/3;
     background: #eaeaea;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: 1fr;
     /*
     border: solid 1px #969696;
     */
@@ -600,10 +649,20 @@ export default {
 }
 
 #path_loadbutton {
+    margin: 7px auto;
+    width: 90%;
+    display: block;
+    border-radius: 9px;
+    background: #2f42ff;
 }
 
 .materialicon {
     font-family: 'material_icon';
+}
+
+#sidebar-icons{
+    grid-column: 1/2;
+    grid-row: 1/2;
 }
 
 .sidebar_icon {
@@ -611,7 +670,7 @@ export default {
     width: 100%;
     width: 32px;
     height: 32px;
-    margin: 4px auto;
+    margin: 4px 4px;
     line-height: 32px;
     border-radius: 4px;
 }
@@ -648,5 +707,41 @@ export default {
 
 .range {
     margin: 5px 0px 5px 5px
+}
+
+.dir-file{
+    height: auto;
+    /*
+    background: #a1a1a1;
+    */
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.dir-file:hover{
+    background: #dcdcdc;
+}
+
+.label-filename {
+    font-size: 0.8em;
+    height: 50%;
+    word-break: break-all;
+    overflow: hidden;
+
+}
+
+#folder-viewer {
+    overflow-y:auto;
+    height: 100%;
+}
+
+.file-icon {
+    width: 40px;
+    display: inline-block;
+}
+
+.content {
+
 }
 </style>

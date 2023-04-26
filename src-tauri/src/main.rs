@@ -64,6 +64,7 @@ fn get_data(path: String) -> FileData {
 
     if check_extension(path.clone()) {
         let data = std::fs::read(path.clone()).unwrap();
+        println!("aaaaa");
         let face = match ttf_parser::Face::parse(&data, 0) {
             Ok(f) => f,
             Err(e) => {
@@ -96,7 +97,6 @@ fn get_data(path: String) -> FileData {
         println!("PostScript name: {:?}", post_script_name);
 
         let dir_list = get_dir(path.clone());
-        println!("{:?}", dir_list);
         return FileData {
             has_patharg: true,
             err: "".to_string(),
@@ -124,6 +124,39 @@ fn get_data(path: String) -> FileData {
     */
 }
 
+/*fn read_woff2(){
+    let font_data = std::fs::read(r"C:\Users\ym174\WebstormProjects\fontflash\src\assets\fonts\NotoSansCJKjp-Black.woff2").unwrap();
+    let woff = Woff::parse(&font_data[..]).unwrap();
+    println!("Metadata: {:?}", woff.metadata());
+}
+*/
+#[tauri::command]
+fn get_filelist(dirpath: String) -> Vec<String>{
+    let mut dir_list: Vec<String> = vec![];
+    println!("{}", dirpath.to_string());
+    let target = path::PathBuf::from(dirpath);
+    for dir_entry in fs::read_dir(target).unwrap() {
+        // dir_entry(Result<DirEntry, Error>型)をfile_path(PathBuf型)に変換する
+        let entry = dir_entry.unwrap();
+        if entry.file_type().unwrap().is_file() {
+            let file_path: String = entry.file_name().into_string().unwrap();
+            /*            let file_path : &str = file_path.unwrap();
+            */
+            println!("{}",file_path.to_string());
+            let splited_name = file_path.split(r".").collect::<Vec<&str>>();
+            if splited_name.len() > 1 {
+                let extension = splited_name[splited_name.len() - 1];
+                if extension == "woff2" ||
+                    extension == "woff" ||
+                    extension == "ttf" ||
+                    extension == "otf" {
+                    dir_list.push(file_path.to_string());
+                }
+            }
+        }
+    }
+    return dir_list;}
+
 fn get_dir(path: String) -> Vec<String> {
     let mut dir_list: Vec<String> = vec![];
     let filename = path.split(r"\").collect::<Vec<&str>>()[path.split(r"\").collect::<Vec<&str>>().len() - 1];
@@ -138,10 +171,9 @@ fn get_dir(path: String) -> Vec<String> {
         if entry.file_type().unwrap().is_file() {
             let file_path: String = entry.file_name().into_string().unwrap();
             /*            let file_path : &str = file_path.unwrap();
-            */            println!("{:?}", file_path);
+            */
             let splited_name = file_path.split(r".").collect::<Vec<&str>>();
             if splited_name.len() > 1 {
-                println!("{}", splited_name.len());
                 let extension = splited_name[splited_name.len() - 1];
                 if extension == "woff2" ||
                     extension == "woff" ||
@@ -159,10 +191,9 @@ fn check_extension(path: String) -> bool {
     let filename = path.split(r"\").collect::<Vec<&str>>()[path.split(r"\").collect::<Vec<&str>>().len() - 1];
     let splited_name = filename.split(r".").collect::<Vec<&str>>();
     if splited_name.len() > 1 {
-        println!("{}", splited_name.len());
         let extension = splited_name[splited_name.len() - 1];
-        if /*extension == "woff2" ||
-            extension == "woff" ||*/
+        if extension == "woff2" ||
+            extension == "woff" ||
         extension == "ttf" ||
             extension == "otf" {
             return true;
@@ -215,7 +246,7 @@ fn main() {
             // フォーカスを有効にする。
             window.set_focus().expect("Failed to set-on-top!");
         }))
-        .invoke_handler(tauri::generate_handler![get_args,get_data])
+        .invoke_handler(tauri::generate_handler![get_args,get_data,get_filelist])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
