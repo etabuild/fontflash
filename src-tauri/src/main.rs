@@ -27,6 +27,7 @@ struct FileData {
     has_patharg: bool,
     err: String,
     filepath: String,
+    dir: String,
     dir_files: Vec<String>,
     font_name: Vec<String>,
     font_weight: u16,
@@ -42,6 +43,7 @@ fn get_args() -> FileData {
             has_patharg: false,
             err: "".to_string(),
             filepath: "undefined".to_string(),
+            dir: "undefined".to_string(),
             dir_files: vec![],
             font_name: vec![],
             font_weight: 0,
@@ -49,6 +51,11 @@ fn get_args() -> FileData {
     }
 
     return get_data(_args[1].clone());
+}
+
+fn get_path() -> String {
+    let args:Vec<String> = env::args().collect();
+    return args[1].clone()
 }
 
 /*#[tauri::command]
@@ -101,6 +108,8 @@ fn get_data(path: String) -> FileData {
             has_patharg: true,
             err: "".to_string(),
             filepath: path.clone(),
+            dir: "undefined".to_string(),
+
             dir_files: dir_list,
             font_name: family_names,
             font_weight: convert_weight(face.weight()),
@@ -111,6 +120,7 @@ fn get_data(path: String) -> FileData {
         has_patharg: false,
         err: "".to_string(),
         filepath: "undefined".to_string(),
+        dir: "undefined".to_string(),
         dir_files: vec![],
         font_name: vec![],
         font_weight: 0,

@@ -2,12 +2,14 @@
     <div id="config" class="modal hide">
         <button class="materialicon icon" @click="control_modal('config')" id="b_modalcontrol">close</button>
     </div>
-    <div data-tauri-drag-region id="shade" @mousedown="maximizeFromTitlebar($event)" class="hide"></div>
+    <div data-tauri-drag-region  pointer-events="all" id="shade" @mousedown="maximizeFromTitlebar($event)" class="hide"></div>
 
     <div id="container" ref="container" class="" @select="block_select">
 
         <div id="toolbar">
-            <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname">FontFlash</p>
+            <p data-tauri-drag-region  pointer-events="all" @click="toggle_windowMaximize($event)" id="label_appname"><img class="logo_main"
+                                                                                                     src="../assets/logo/logo_text_grey.svg">
+            </p>
             <button id="b_close" @click="close_window()" class="icon win_control">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -16,13 +18,13 @@
                 </svg>
             </button>
             <button id="b_maximize" @click="toggle_windowMaximize($event)" class="icon win_control">
-                <svg v-if="!maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
+                <svg v-if="!ui.maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
                      xmlns="http://www.w3.org/2000/svg">
                     <path
                             d="M5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75A2.75 2.75 0 0 1 5.75 3Zm0 1.5c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25H5.75Z"
                             fill="#212121"/>
                 </svg>
-                <svg v-if="maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
+                <svg v-if="ui.maximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
                      xmlns="http://www.w3.org/2000/svg">
                     <path
                             d="M7.518 5H6.009a3.25 3.25 0 0 1 3.24-3h8.001A4.75 4.75 0 0 1 22 6.75v8a3.25 3.25 0 0 1-3 3.24v-1.508a1.75 1.75 0 0 0 1.5-1.732v-8a3.25 3.25 0 0 0-3.25-3.25h-8A1.75 1.75 0 0 0 7.518 5ZM5.25 6A3.25 3.25 0 0 0 2 9.25v9.5A3.25 3.25 0 0 0 5.25 22h9.5A3.25 3.25 0 0 0 18 18.75v-9.5A3.25 3.25 0 0 0 14.75 6h-9.5ZM3.5 9.25c0-.966.784-1.75 1.75-1.75h9.5c.967 0 1.75.784 1.75 1.75v9.5a1.75 1.75 0 0 1-1.75 1.75h-9.5a1.75 1.75 0 0 1-1.75-1.75v-9.5Z"
@@ -44,14 +46,14 @@
                 </svg>
             </button>
 
-            <button id="b_pin" v-if="!pinned" @click="pinWindow()" class="materialicon icon">
+            <button id="b_pin" v-if="!ui.pinned" @click="pinWindow()" class="materialicon icon">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
                             d="m16.242 2.932 4.826 4.826a2.75 2.75 0 0 1-.715 4.404l-4.87 2.435a.75.75 0 0 0-.374.426l-1.44 4.166a1.25 1.25 0 0 1-2.065.476L8.5 16.561 4.06 21H3v-1.06l4.44-4.44-3.105-3.104a1.25 1.25 0 0 1 .476-2.066l4.166-1.44a.75.75 0 0 0 .426-.373l2.435-4.87a2.75 2.75 0 0 1 4.405-.715Zm3.766 5.886-4.826-4.826a1.25 1.25 0 0 0-2.002.325l-2.435 4.871a2.25 2.25 0 0 1-1.278 1.12l-3.789 1.31 6.705 6.704 1.308-3.789a2.25 2.25 0 0 1 1.12-1.277l4.872-2.436a1.25 1.25 0 0 0 .325-2.002Z"
                             fill="#212121"/>
                 </svg>
             </button>
-            <button id="b_pin" v-if="pinned" @click="pinWindow()" class="materialicon icon filled">
+            <button id="b_pin" v-if="ui.pinned" @click="pinWindow()" class="materialicon icon filled">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
                             d="m21.068 7.758-4.826-4.826a2.75 2.75 0 0 0-4.404.715l-2.435 4.87a.75.75 0 0 1-.426.374L4.81 10.33a1.25 1.25 0 0 0-.476 2.065L7.439 15.5 3 19.94V21h1.06l4.44-4.44 3.104 3.105a1.25 1.25 0 0 0 2.066-.476l1.44-4.166a.75.75 0 0 1 .373-.426l4.87-2.435a2.75 2.75 0 0 0 .715-4.404Z"
@@ -60,7 +62,7 @@
             </button>
 
         </div>
-        <div v-if="isSelected" id="sidebar">
+        <div v-if="ui.isOpenFile" id="sidebar">
             <div id="sidebar-icons">
                 <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -74,14 +76,18 @@
                 </button>
             </div>
 
-            <div id="sidebar-content" v-if="isOpenSidebar">
-                <div class="content"  v-if="true">
-                    <button id="path_loadbutton" class="materialicon" @click="loadDirFiles">
-                        cloud_upload
-                    </button>
+            <div id="sidebar-content" v-if="ui.isOpenSidebar">
+                <div class="content" v-if="true">
+                    <div id="folder-viewer-control">
+                        <button id="path_loadbutton" class="materialicon" @click="loadDirFiles">
+                            cloud_upload
+                        </button>
+                    </div>
+
                     <div id="folder-viewer">
-                        <div class="dir-file" v-for="filename in dirList">
-                            <img class="file-icon" src="../assets/icons/fileicon/fileicon_ttf.svg"><p class="label-filename">{{ filename }}</p>
+                        <div class="dir-file" v-for="(filename, index) in dir.fontFileList" @click="dirFileOnClick($event,index)">
+                            <img class="file-icon" src="../assets/icons/fileicon/fileicon_ttf.svg">
+                            <p class="label-filename">{{ filename }}</p>
                         </div>
                     </div>
                 </div>
@@ -89,20 +95,20 @@
 
 
         </div>
-        <div v-if="isSelected" id="viewer">
+        <div v-if="ui.isOpenFile" id="viewer">
 
             <div class="font_description">
-                <p id="family-name">{{ familyName }}</p>
+                <p id="family-name">{{ font.familyName }}</p>
                 <div id="font-info">
-                    <p id="control-font-weight" v-if="hasWeight">{{fontWeight}}</p>
-                    <p id="filename">{{filename}}</p>
+                    <p id="control-font-weight" v-if="font.hasWeight">{{ font.fontWeight }}</p>
+                    <p id="filename">{{ filename }}</p>
                 </div>
 
 
                 <div class="font_size_control">
                     <p class="p_size">{{ fontsize }}</p>
                     <input class="range" id="range_fontsize_1"
-                           v-model.number="preview_fontsize_rate[0]" type="range"/>
+                           v-model.number="config.previewFontSizeRate" type="range"/>
                 </div>
             </div>
             <div id="preview_area">
@@ -110,10 +116,9 @@
                       class="preview">あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
             </div>
             <div id="footer_area">
-                <p id="message">{{ message }}</p>
-                <p id="path">{{ args }}</p></div>
+            </div>
         </div>
-        <div id="blank_view" v-if="!isSelected">
+        <div id="blank_view" v-if="!ui.isOpenFile">
             <p id="blank_message">ファイルを開いてね☆</p>
         </div>
 
@@ -129,50 +134,58 @@ import {metadata} from "tauri-plugin-fs-extra-api";
 import {readDir, BaseDirectory} from '@tauri-apps/api/fs';
 import {resolveResource} from '@tauri-apps/api/path'
 import {readTextFile} from '@tauri-apps/api/fs'
-import { open } from '@tauri-apps/api/dialog';
-import { appDir } from '@tauri-apps/api/path';
+import {open} from '@tauri-apps/api/dialog';
+import {appDir} from '@tauri-apps/api/path';
 
 
 export default {
     name: "Main.vue",
-    components: {
-    },
+    components: {},
     data() {
         return {
-            previewFontSize: "1.3em",
-            isSelected: false,
-            familyName: 'Failed to load the family-name',
-            filename: 'Failed to load the font-path',
-            factor: null,
-            hasWeight: true,
+                                                                                                                                            filename: 'Failed to load the font-path',
             isinput: true,
-            args: [],
-            fontt: null,
-            message: 'v0.1 tauri',
-            dirList: [],
-            pinned: false,
-            fs: null,
-            isOpenSidebar: false,
-            maximized: false,
-            preview_fontsize_rate: [11],
+            config: {
+                previewFontSizeRate: 11
+            },
+            font: {
+                loadedFontFace: null,
+                hasWeight: true,
+                fontWeight: "000",
+                familyName: 'abcあいう亜012',
+                fileName: 'N/A',
+            },
+            dir: {
+                currentDir: "",
+                fontFileList: []
+            },
+            ui: {
+                maximized: false,
+                pinned: false,
+                isOpenFile: false,
+                isOpenSidebar: false,
+                factor: null
+            },
+            sys: {
+                fs: null,
+            },
             invoke: null,
-            fontWeight: "N/A"
         }
     },
     computed: {
         fontsize: function () {
-            return Math.round(this.preview_fontsize_rate[0] * 1.4) + 10 + 'pt'
+            return Math.round(this.config.previewFontSizeRate * 1.4) + 10 + 'pt'
         }
     },
     mounted: async function () {
-        this.$data.invoke = window.__TAURI__.invoke
+        this.invoke = window.__TAURI__.invoke
         appWindow.isMaximized().then((isMaximized) => {
             if (isMaximized) {
                 console.log('maximized(When app has launched)')
-                this.$data.maximized = true
+                this.$data.ui.maximized = true
             }
         })
-        this.$data.factor = appWindow.scaleFactor()
+        this.$data.ui.factor = appWindow.scaleFactor()
 
         this.getArgs();
         let a = this
@@ -181,16 +194,16 @@ export default {
         function setMaximizeIcon() {
             appWindow.isMaximized().then((isMaximized) => {
                 if (isMaximized) {
-                    if(vm.pinned){
+                    if (vm.ui.pinned) {
                         this.$refs.container.classList.remove("is_pinned")
                         appWindow.setAlwaysOnTop(false);
-                        vm.pinned = false
+                        vm.ui.pinned = false
                     }
                     //console.log('maximized')
-                    vm.maximized = true
+                    vm.ui.maximized = true
                 } else {
                     //console.log('unMaximized')
-                    vm.maximized = false
+                    vm.ui.maximized = false
                 }
             })
 
@@ -203,10 +216,10 @@ export default {
                 console.log(`instance_detection ${event.payload}`)
                 vm.isSelected = true
                 console.log(event.payload)
-                if(event.payload.has_patharg){
+                if (event.payload.has_patharg) {
                     console.log(event.payload)
                     a.loadFont(vm, event.payload)
-                }else{
+                } else {
                     alert('Un-supported file!! \n Extension may be wrong. Please rename it.')
                 }
             });
@@ -218,20 +231,23 @@ export default {
         this.loadPreviewWhenDebug()
     },
     methods: {
+        dirFileOnClick: function (e, index) {
+            console.log(this.$data.dir.fontFileList[index])
 
+        },
         loadPreviewWhenDebug: function () {
             let a = this
             let vm = this.$data
-            this.$data.invoke('get_data', {path:"C:\\Windows\\Fonts\\yumin.ttf"}).then(function(data){
+            this.$data.invoke('get_data', {path: "C:\\Windows\\Fonts\\yumin.ttf"}).then(function (data) {
 
                 console.log(data)
 
                 if (data.has_patharg) {
 
-/*
-                    a.loadFont(vm, data)
-*/
-                    vm.isSelected = true
+                    /*
+                                        a.loadFont(vm, data)
+                    */
+                    vm.ui.isOpenFile = true
                 } else {
                 }
 
@@ -240,7 +256,7 @@ export default {
 
         getArgs: function () {
             this.$data.isinput = false;
-            this.$data.invoke('get_args', {}).then(function(data){
+            this.$data.invoke('get_args', {}).then(function (data) {
                 let args = data.args;
                 console.log(data)
 
@@ -257,12 +273,14 @@ export default {
             let a = this
         },
 
+        getData: function(){
 
+        },
         displayFontData: function (vm, fontdata) {
             vm.familyName = fontdata.font_name.join(' | ')
-            if(fontdata.fontWeight!==0){
+            if (fontdata.fontWeight !== 0) {
                 vm.fontWeight = fontdata.font_weight;
-            }else{
+            } else {
                 vm.hasWeight = false;
             }
         },
@@ -272,19 +290,19 @@ export default {
                         document.fonts.delete(vm.fontt)
             */
             vm.dirList = fontdata.dir_files;
-            if(vm.fontt!==null){
-                document.fonts.delete(vm.fontt);
+            if (vm.font.loadedFontFace !== null) {
+                document.fonts.delete(vm.font.loadedFontFace);
 
             }
             console.log(metadata(fontdata.filepath))
             vm.familyName = fontdata.font_name.join(' | ')
-            if(fontdata.fontWeight!==0){
+            if (fontdata.fontWeight !== 0) {
                 vm.fontWeight = fontdata.font_weight;
-            }else{
+            } else {
                 vm.hasWeight = false;
             }
-            vm.fontt = new FontFace("LoadedFont", "url(" + convertFileSrc(fontdata.filepath) + ")")
-            vm.fontt.load().then(function (loaded_face) {
+            vm.font.loadedFontFace = new FontFace("LoadedFont", "url(" + convertFileSrc(fontdata.filepath) + ")")
+            vm.font.loadedFontFace.load().then(function (loaded_face) {
                 /// フォント読み込み成功
                 /// body要素全体にそれを適用する
                 document.fonts.add(loaded_face);
@@ -324,25 +342,25 @@ export default {
         },
         toggle_windowMaximize: function (event) {
             appWindow.toggleMaximize();
-            this.$data.maximized = !this.$data.maximized
+            this.$data.ui.maximized = !this.$data.ui.maximized
 
         },
         minimize_window: function () {
             appWindow.minimize();
 
         },
-/*        set_preview_height: function () {
-            this.style.height = "auto";
-            this.style.height = `${this.scrollHeight}px`;
-        },*/
+        /*        set_preview_height: function () {
+                    this.style.height = "auto";
+                    this.style.height = `${this.scrollHeight}px`;
+                },*/
         pinWindow: async function () {
             const factor = appWindow.scaleFactor()
             let container = document.getElementById("container")
 
-            if (!this.$data.pinned) {
+            if (!this.$data.ui.pinned) {
                 await appWindow.setAlwaysOnTop(true);
-                this.$data.pinned = true;
-                if (!this.$data.maximized) {
+                this.$data.ui.pinned = true;
+                if (!this.$data.ui.maximized) {
 
                 }
                 container.classList.add("is_pinned")
@@ -370,25 +388,25 @@ export default {
                 multiple: false,
                 defaultPath: await appDir(),
             })
-            if(selected===null){
+            if (selected === null) {
                 return
             }
-            console.log(selected+'\\a')
-/*             var fileList = await readDir('users', {dir: convertFileSrc(BaseDirectory.AppData), recursive: true});
-            console.log(fileList) */
+            console.log(selected + '\\a')
+            /*             var fileList = await readDir('users', {dir: convertFileSrc(BaseDirectory.AppData), recursive: true});
+                        console.log(fileList) */
             let docdata = this.$data;
-            this.$data.invoke('get_filelist', {dirpath:selected+'\\'}).then(function(data){
-                if(data!==null){
+            this.$data.invoke('get_filelist', {dirpath: selected + '\\'}).then(function (data) {
+                if (data !== null) {
                     console.log(data)
-                    docdata.dirList = data;
-                }else{
+                    docdata.dir.fontFileList = data;
+                } else {
                     alert('cancelled')
                 }
-                
+
             })
         },
         openSidebar: function (event) {
-            this.isOpenSidebar = !this.isOpenSidebar
+            this.ui.isOpenSidebar = !this.ui.isOpenSidebar
             console.log(event)
 
             if (event.target.closest("#container").classList.contains("sidebar-open")) {
@@ -439,7 +457,7 @@ export default {
 
 }
 
-#control-font-weight{
+#control-font-weight {
     background: #20ffaa;
     color: #000;
     padding: 2px 7px;
@@ -604,7 +622,8 @@ export default {
     grid-template-rows: 70px 1fr 70px;
 
 }
-#font-info{
+
+#font-info {
     grid-column: 1/2;
     grid-row: 2/3
 }
@@ -634,7 +653,7 @@ export default {
     */
     padding: 0px 12px 12px 12px;
     background: #dcdcdc;
-    overflow-y: auto;
+    overflow-y: hidden;
     /*
     border-radius: 10px;
     */
@@ -660,7 +679,7 @@ export default {
     font-family: 'material_icon';
 }
 
-#sidebar-icons{
+#sidebar-icons {
     grid-column: 1/2;
     grid-row: 1/2;
 }
@@ -709,17 +728,18 @@ export default {
     margin: 5px 0px 5px 5px
 }
 
-.dir-file{
+.dir-file {
     height: auto;
     /*
     background: #a1a1a1;
     */
+    margin-right: -10px;
     margin-bottom: 5px;
     padding: 5px;
     border-radius: 3px;
 }
 
-.dir-file:hover{
+.dir-file:hover {
     background: #dcdcdc;
 }
 
@@ -732,8 +752,10 @@ export default {
 }
 
 #folder-viewer {
-    overflow-y:auto;
-    height: 100%;
+    grid-column: 1/2;
+    grid-row: 2/3;
+    overflow-y: auto;
+    height: 85vh;
 }
 
 .file-icon {
@@ -742,6 +764,19 @@ export default {
 }
 
 .content {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 55px 1fr;
+    grid-template-columns: 1fr;
+}
 
+#folder-viewer-control {
+    height: 100%;
+    grid-row: 1/2;
+    grid-column: 1/2;
+}
+
+.logo_main {
+    height: 40%;
 }
 </style>

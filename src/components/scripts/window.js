@@ -1,0 +1,4 @@
+const windowControl = class{
+    constructor() {
+    }
+}
