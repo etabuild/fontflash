@@ -6,7 +6,7 @@
 
     <div id="container" ref="container" class="" @select="block_select">
 
-        <div id="toolbar">
+<!--        <div id="toolbar">
             <p data-tauri-drag-region  pointer-events="all" @click="toggle_windowMaximize($event)" id="label_appname"><img class="logo_main"
                                                                                                      src="../assets/logo/logo_text_grey.svg">
             </p>
@@ -61,7 +61,7 @@
                 </svg>
             </button>
 
-        </div>
+        </div>-->
         <div v-if="ui.isOpenFile" id="sidebar">
             <div id="sidebar-icons">
                 <button class="materialicon icon sidebar_icon" @click="openSidebar($event)">
@@ -143,7 +143,7 @@ export default {
     components: {},
     data() {
         return {
-                                                                                                                                            filename: 'Failed to load the font-path',
+            filename: 'Failed to load the font-path',
             isinput: true,
             config: {
                 previewFontSizeRate: 11

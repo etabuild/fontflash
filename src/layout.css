@@ -1,0 +1,42 @@
+.titlebar {
+
+}
+#app-root{
+    background: #edf6ff;
+    height: 100vh;
+}
+
+.viewer{
+    grid-column: 3/4;
+    grid-row: 2/3;
+}
+
+.sidebar{
+    grid-column: 1/2;
+    grid-row: 2/3;
+}
+.container.sidebar-open{
+    grid-template-columns: 40px 200px 1fr;
+
+}
+.container {
+    display: grid;
+    grid-template-columns: 40px 0 1fr;
+    grid-template-rows:  40px 1fr;
+    gap: 3px;
+    margin-top: -40px;
+    height: 100vh;
+    /*
+    height: 100vh;
+    */
+    padding: 0px 12px 12px 12px;
+    background: none;
+    overflow-y: hidden;
+    /*
+    border-radius: 10px;
+    */
+    /*
+    box-shadow: black 0px 0px 6px;
+    */
+
+}
