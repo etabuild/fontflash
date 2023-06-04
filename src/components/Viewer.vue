@@ -1,13 +1,16 @@
 <script setup>
-import {ref,reactive} from "vue";
+import {ref, reactive, computed} from "vue";
 let font = reactive({
     familyName: "familynameHere",
     fontWeight: "000"
 })
+const fontsize = computed(()=>Math.round(config.previewFontSizeRate * 1.4) + 10 + 'pt')
 let config = reactive({
-    previewFontSizeRate:1.5
+    previewFontSizeRate:11
 })
+/*
 let fontsize = 500
+*/
 let filename = "name"
 </script>
 
@@ -93,8 +96,12 @@ let filename = "name"
     padding: 10px;
     height: 90%;
 
-}
+}/*
+#filename {
+    display: inline-block;
+    padding: 0px 4px;
 
+}*/
 .preview :focus {
     outline: none;
     background: #000;

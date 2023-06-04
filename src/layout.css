@@ -1,14 +1,16 @@
 .titlebar {
-
+/*    grid-column: 2/3;
+    grid-row: 1/2;*/
 }
 #app-root{
-    background: #edf6ff;
+    background: #f4faff;
     height: 100vh;
 }
 
 .viewer{
     grid-column: 3/4;
     grid-row: 2/3;
+    padding:0px 12px 12px 12px;
 }
 
 .sidebar{
@@ -23,13 +25,16 @@
     display: grid;
     grid-template-columns: 40px 0 1fr;
     grid-template-rows:  40px 1fr;
-    gap: 3px;
+    row-gap: 8px;
     margin-top: -40px;
     height: 100vh;
     /*
     height: 100vh;
     */
-    padding: 0px 12px 12px 12px;
+    /*
+    padding: 0px 6px 12px 6px;
+    */
+    padding: 0px;
     background: none;
     overflow-y: hidden;
     /*

@@ -1,15 +1,17 @@
 <script setup>
 import {ref, reactive} from "vue";
+
 let ui = reactive({
     isOpenFile: true,
     isOpenSidebar: false
 })
-function openSidebar(e){
-    ui.isOpenSidebar =!ui.isOpenSidebar
-    if(ui.isOpenSidebar){
+
+function openSidebar(e) {
+    ui.isOpenSidebar = !ui.isOpenSidebar
+    if (ui.isOpenSidebar) {
         e.target.closest(".container").classList.add("sidebar-open")
 
-    }else{
+    } else {
         e.target.closest(".container").classList.remove("sidebar-open")
 
     }
@@ -30,7 +32,6 @@ function openSidebar(e){
                 -->
             </button>
         </div>
-
 
 
     </div>
@@ -58,9 +59,12 @@ function openSidebar(e){
     grid-column: 2/3;
     grid-row: 1/2;
     overflow: hidden;
-    border-radius: 0px 8px 8px 0px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border:1px solid #707070;
     background-color: #ffffff
 }
+
 .sidebar_icon {
     padding: 4px;
     color: #ffffff;
@@ -76,6 +80,7 @@ function openSidebar(e){
     background: #eaeaea;
     font-variation-settings: 'FILL' 0
 }
+
 #sidebar-content {
     grid-column: 2/3;
     grid-row: 2/3;
@@ -83,15 +88,20 @@ function openSidebar(e){
     background-color: #ffffff
 }
 
-#sidebar:hover{border: solid 1px #8a8a8a;
-    margin :0px;
-    background: #ffffff;}
+#sidebar:hover {
+/*    border: solid 1px #8a8a8a;
+    background: #ffffff;*/
+
+    margin: 0px;
+}
 
 
 #sidebar {
     border: none;
-    margin:1px;
-    background:none;
+    /*
+    margin: 1px;
+    */
+    background: none;
     display: grid;
     grid-column: 1/2;
     grid-row: 2/3;

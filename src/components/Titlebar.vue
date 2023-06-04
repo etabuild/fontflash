@@ -44,7 +44,10 @@ const toggleWindowMaximize =(()=>{
 
 <template>
     <div id="content">
-        <p data-tauri-drag-region pointer-events="all" @click="toggle_windowMaximize($event)" id="label_appname"><img
+        <button id="b_navigation">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.753 18h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493L2.753 18h18.5-18.5Zm0-6.497h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493l.102-.007h18.5-18.5Zm-.001-6.5h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5A.75.75 0 0 1 2.65 5.01l.102-.007h18.5-18.5Z" fill="#000000"/></svg>
+        </button>
+        <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname"><img
             class="logo_main"
             src="../assets/logo/logo_text_grey.svg">
         </p>
@@ -106,12 +109,12 @@ const toggleWindowMaximize =(()=>{
 }
 
 #b_minimize:hover, #b_maximize:hover {
-    background: #d0d0d0;
+    background: #d3dce5;
     border-radius: 0;
 
 }
 #b_maximize {
-    grid-column: 5/6;
+    grid-column: 6/7;
     grid-row: 1/2;
     /*
     transform:translateY(-6px);
@@ -120,9 +123,10 @@ const toggleWindowMaximize =(()=>{
 }
 
 #content {
+    background: #e0ecf8;
     height: 40px;
-    grid-column: 1/4;
-    grid-row: 1/2;
+/*    grid-column: 2/4;
+    grid-row: 1/2;*/
     /*
     background: #fff;
     */
@@ -140,7 +144,7 @@ const toggleWindowMaximize =(()=>{
     */
     display: grid;
     grid-template-rows: 100%;
-    grid-template-columns: 1fr 40px 40px 47px 47px 47px;
+    grid-template-columns: 40px 1fr 40px 40px 47px 47px 47px;
     /*
     margin: -10px -20px 0 -20px;
     */
@@ -157,12 +161,12 @@ button {
     font-size: 1.25em;
     margin-left: 10px;
     line-height: 43px;
-    grid-column: 1/2;
+    grid-column: 2/3;
     grid-row: 1/2;
 }
 
 #b_close {
-    grid-column: 6/7;
+    grid-column: 7/8;
     grid-row: 1/2;
 }
 
@@ -176,14 +180,19 @@ button {
     border-radius: 0px;
 }
 
+#b_navigation{
+    margin-left: 5px;
+    padding: 10px;
+}
+
 #b_pin {
-    grid-column: 3/4;
+    grid-column: 4/5;
     grid-row: 1/2;
 }
 
 
 #b_setting {
-    grid-column: 2/3;
+    grid-column: 3/4;
     grid-row: 1/2;
 }
 </style>

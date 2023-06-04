@@ -9,9 +9,9 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 */
-use std::{env, path};
+use std::{env, path, thread, time};
 use std::borrow::Cow;
-use tauri::{Manager};
+use tauri::{AppHandle, Manager};
 use window_shadows::set_shadow;
 use std::fs;
 use std::fs::File;
@@ -54,8 +54,8 @@ fn get_args() -> FileData {
 }
 
 fn get_path() -> String {
-    let args:Vec<String> = env::args().collect();
-    return args[1].clone()
+    let args: Vec<String> = env::args().collect();
+    return args[1].clone();
 }
 
 /*#[tauri::command]
@@ -141,7 +141,7 @@ fn get_data(path: String) -> FileData {
 }
 */
 #[tauri::command]
-fn get_filelist(dirpath: String) -> Vec<String>{
+fn get_filelist(dirpath: String) -> Vec<String> {
     let mut dir_list: Vec<String> = vec![];
     println!("{}", dirpath.to_string());
     let target = path::PathBuf::from(dirpath);
@@ -152,7 +152,7 @@ fn get_filelist(dirpath: String) -> Vec<String>{
             let file_path: String = entry.file_name().into_string().unwrap();
             /*            let file_path : &str = file_path.unwrap();
             */
-            println!("{}",file_path.to_string());
+            println!("{}", file_path.to_string());
             let splited_name = file_path.split(r".").collect::<Vec<&str>>();
             if splited_name.len() > 1 {
                 let extension = splited_name[splited_name.len() - 1];
@@ -165,7 +165,8 @@ fn get_filelist(dirpath: String) -> Vec<String>{
             }
         }
     }
-    return dir_list;}
+    return dir_list;
+}
 
 fn get_dir(path: String) -> Vec<String> {
     let mut dir_list: Vec<String> = vec![];
@@ -204,7 +205,7 @@ fn check_extension(path: String) -> bool {
         let extension = splited_name[splited_name.len() - 1];
         if extension == "woff2" ||
             extension == "woff" ||
-        extension == "ttf" ||
+            extension == "ttf" ||
             extension == "otf" {
             return true;
         }
@@ -212,6 +213,17 @@ fn check_extension(path: String) -> bool {
     return false;
 }
 
+/*#[tauri::command]
+fn send_fontpath(app_handle: AppHandle){
+
+    let handle = thread::spawn(move || {
+        let ten_millis = time::Duration::from_millis(10000);
+
+        thread::sleep(ten_millis);
+        println!("Here's a vector: {:?}",path);
+    });
+}
+*/
 fn convert_weight(weight: Weight) -> u16 {
     return match weight {
         Weight::Thin => 100,
@@ -223,13 +235,24 @@ fn convert_weight(weight: Weight) -> u16 {
         Weight::Bold => 700,
         Weight::ExtraBold => 800,
         Weight::Black => 900,
-        Weight::Other(value)=> value,
+        Weight::Other(value) => value,
         _ => {
             0
         }
     };
 }
 
+fn woff2() {
+    let data = std::fs::read("C:\\Users\\ym174\\Documents\\reacttest3\\src\\assets\\fonts\\LINESeedJP_OTF_Th.woff2").unwrap();
+    let raw_face = match ttf_parser::RawFace::parse(&data, 0) {
+        Ok(f) => f,
+        Err(e) => {
+            eprint!("Error: {}.", e);
+            std::process::exit(1);
+        }
+    };
+
+}
 /*
 fn get_metadata() -> FileMetaData{
 
@@ -237,20 +260,25 @@ fn get_metadata() -> FileMetaData{
 
 */
 fn main() {
+    woff2();
     tauri::Builder::default()
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             set_shadow(&window, true).expect("Unsupported platform!");
-
+            let mut args: Vec<String> = env::args().collect();
+            println!("{:?}", args);
+            app.emit_all("init", args).unwrap();
             Ok(())
         })
         .plugin(tauri_plugin_fs_extra::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
             let f = get_data(argv[1].clone());
+
             app.emit_all("instance_detection", f).unwrap();
             let window = app.get_window("main").unwrap();
-
+            /*            send_fontdata("aa".to_string());
+            */
             // 最小化されてる場合は解除。
             window.unminimize().expect("Failed to un-minimize!");
             // フォーカスを有効にする。
