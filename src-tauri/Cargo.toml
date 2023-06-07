@@ -1,6 +1,6 @@
 [package]
-name = "fontviewer-tauri"
-version = "0.1.0"
+name = "fontflash"
+version = "0.0.1"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -15,6 +15,7 @@ tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
 fonttools = "0.1.0"
+encoding_rs = "0.8.16"
 serde_json = "1.0"
 allsorts = "0.14.0"
 serde = { version = "1.0", features = ["derive"] }

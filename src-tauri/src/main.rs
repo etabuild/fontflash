@@ -3,6 +3,8 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
+extern crate core;
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 /*#[tauri::command]
 fn greet(name: &str) -> String {
@@ -11,15 +13,23 @@ fn greet(name: &str) -> String {
 */
 use std::{env, path, thread, time};
 use std::borrow::Cow;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, Wry};
 use window_shadows::set_shadow;
 use std::fs;
-use std::fs::File;
-use std::io::BufRead;
+/*use std::fs::File;
+*/use std::io::BufRead;
+use allsorts::binary::read::ReadScope;
+use allsorts::error::ParseError;
+use allsorts::font_data::FontData;
+use allsorts::tables::{NameTable, OpenTypeData};
+use allsorts::tag;
+use allsorts::woff2::Woff2Font;
+use encoding_rs::{Encoding, MACINTOSH, UTF_16BE};
 use tauri::api::dir::is_dir;
 use fonttools::font::{self, Font, Table};
 use fonttools::name::{name, NameRecord, NameRecordID};
 use serde::{Serialize, Deserialize};
+use tauri::api::http::FormPart::File;
 use ttf_parser::Weight;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -33,6 +43,12 @@ struct FileData {
     font_weight: u16,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct FileDataContainer {
+    err: String,
+    names: Vec<Vec<String>>,
+    dir_files: Vec<String>,
+}
 
 #[tauri::command]
 fn get_args() -> FileData {
@@ -242,26 +258,177 @@ fn convert_weight(weight: Weight) -> u16 {
     };
 }
 
-fn woff2() {
-    let data = std::fs::read("C:\\Users\\ym174\\Documents\\reacttest3\\src\\assets\\fonts\\LINESeedJP_OTF_Th.woff2").unwrap();
-    let raw_face = match ttf_parser::RawFace::parse(&data, 0) {
-        Ok(f) => f,
-        Err(e) => {
-            eprint!("Error: {}.", e);
-            std::process::exit(1);
-        }
-    };
-
-}
 /*
 fn get_metadata() -> FileMetaData{
 
 }
 
 */
+#[tauri::command]
+fn get_font_data_from_args(app: AppHandle<Wry>) -> FileDataContainer{
+    let mut args: Vec<String> = env::args().collect();
+    return if args.len() >= 2 {
+        thread::spawn(move || {
+            app.emit_all("request_detected", &args[1]).expect("Couldn't send filepath");
+        });
+
+        request_name_data(args[1].clone())
+    } else {
+        FileDataContainer {
+            err: "Couldn't find arg".to_string(),
+            names: vec![],
+            dir_files: vec![],
+        }
+    }
+
+}
+
+#[tauri::command]
+fn request_name_data(path: String) -> FileDataContainer {
+    let err_data = FileDataContainer {
+        err: "noooooo".to_string(),
+        names: vec![],
+        dir_files: vec![],
+    };
+    let mut buffer = match std::fs::read(path) {
+        Err(err) => return err_data,
+        Ok(ok) => ok
+    };
+    /*  let buffer;
+      match buffer_result {
+          Err(err) => Err(err),
+          Ok(ok) => Ok(buffer = ok)
+      }.expect("aaaamoumuriiiii");*/
+
+    let scope = ReadScope::new(&buffer);
+
+    let mut font_file = match scope.read::<FontData>() {
+        Err(err) => return err_data,
+        Ok(ok) => ok
+    };
+
+    let result_name = match &font_file {
+        /*FontData::OpenType(font_file) => match &font_file.data {
+            OpenTypeData::Single(ttf) => {
+                dump_ttf(&table_provider, &font_file.scope, ttf, table, flags)?
+            }
+            OpenTypeData::Collection(ttc) => {
+                dump_ttc(&table_provider, &font_file.scope, ttc, table, flags)?
+            }
+        },
+        FontData::Woff(woff_file) => dump_woff(woff_file, table, flags)?,*/
+        FontData::Woff2(woff_file) => match get_woff2_name(woff_file) {
+            Ok(ok) => ok,
+            Err(_) => return err_data
+        },
+        _ => vec![],
+    };
+    /*    match result_name {
+            Err(err)=> { data.err = err.to_string() }
+            Ok(ok) => {data.names = ok}
+        }*/
+    let mut data = FileDataContainer {
+        err: "undefined".to_string(),
+        names: result_name,
+        dir_files: vec![],
+    };
+    return data;
+}
+
+fn get_woff2_name(woff: &Woff2Font) -> Result<Vec<Vec<String>>, ParseError> {
+    if let Ok(Some(table)) = woff.read_table(tag::NAME, 0) {
+        println!();
+        let name_table = table.scope().read::<NameTable>()?;
+        Ok::<Result<Vec<Vec<String>>, ParseError>, ParseError>(dump_name_table(&name_table))?
+    } else {
+        return Ok(vec![]);
+    }
+}
+
+fn dump_name_table(name_table: &NameTable) -> Result<Vec<Vec<String>>, ParseError> {
+    let mut names: Vec<Vec<String>> = vec![];
+
+    for name_record in &name_table.name_records {
+        let mut pair: Vec<String> = vec!["".to_string(),"".to_string()];
+        let platform = name_record.platform_id;
+        let encoding = name_record.encoding_id;
+        let language = name_record.language_id;
+        let offset = usize::from(name_record.offset);
+        let length = usize::from(name_record.length);
+        let name_data = name_table
+            .string_storage
+            .offset_length(offset, length)?
+            .data();
+        let name = match (platform, encoding, language) {
+            (0, _, _) => decode(UTF_16BE, name_data),
+            (1, 0, _) => decode(MACINTOSH, name_data),
+            (3, 0, _) => decode(UTF_16BE, name_data),
+            (3, 1, _) => decode(UTF_16BE, name_data),
+            (3, 10, _) => decode(UTF_16BE, name_data),
+            _ => format!(
+                "(unknown platform={} encoding={} language={})",
+                platform, encoding, language
+            ),
+        };
+        match get_name_meaning(name_record.name_id) {
+            Some(meaning) => pair[0] = meaning.to_string(),
+            None => pair[0] = "".to_string(),
+        }
+        println!("{:?}", name);
+        pair[1] = name;
+        println!();
+        names.push(pair);
+    }
+
+    Ok(names)
+}
+
+fn decode(encoding: &'static Encoding, data: &[u8]) -> String {
+    let mut decoder = encoding.new_decoder();
+    if let Some(size) = decoder.max_utf8_buffer_length(data.len()) {
+        let mut s = String::with_capacity(size);
+        let (_res, _read, _repl) = decoder.decode_to_string(data, &mut s, true);
+        s
+    } else {
+        String::new() // can only happen if buffer is enormous
+    }
+}
+
+fn get_name_meaning(name_id: u16) -> Option<&'static str> {
+    match name_id {
+        0 => Some("Copyright"),
+        1 => Some("Font Family"),
+        2 => Some("Font Subfamily"),
+        3 => Some("Unique Identifier"),
+        4 => Some("Full Font Name"),
+        5 => Some("Version"),
+        6 => Some("PostScript Name"),
+        7 => Some("Trademark"),
+        8 => Some("Manufacturer"),
+        9 => Some("Designer"),
+        10 => Some("Description"),
+        11 => Some("URL Vendor"),
+        12 => Some("URL Designer"),
+        13 => Some("License Description"),
+        14 => Some("License Info URL"),
+        15 => None, // Reserved
+        16 => Some("Typographic Family"),
+        17 => Some("Typographic Subfamily"),
+        18 => Some("Compatible Full"),
+        19 => Some("Sample Text"),
+        20 => Some("PostScript CID findfont"),
+        21 => Some("WWS Family Name"),
+        22 => Some("WWS Subfamily Name"),
+        23 => Some("Light Background Palette"),
+        24 => Some("Dark Background Palette"),
+        25 => Some("Variations PostScript Name Prefix"),
+        _ => None,
+    }
+}
+
 fn main() {
-    woff2();
-    tauri::Builder::default()
+    /*    woff2();
+    */    tauri::Builder::default()
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             set_shadow(&window, true).expect("Unsupported platform!");
@@ -271,11 +438,11 @@ fn main() {
             Ok(())
         })
         .plugin(tauri_plugin_fs_extra::init())
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            println!("{}, {argv:?}, {cwd}", app.package_info().name);
-            let f = get_data(argv[1].clone());
-
-            app.emit_all("instance_detection", f).unwrap();
+        .plugin(tauri_plugin_single_instance::init(|app, arg, cwd| {
+/*            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+*//*            let f = get_data(argv[1].clone());
+*/
+            app.emit_all("file_request", &arg[1]).unwrap();
             let window = app.get_window("main").unwrap();
             /*            send_fontdata("aa".to_string());
             */
@@ -284,11 +451,8 @@ fn main() {
             // フォーカスを有効にする。
             window.set_focus().expect("Failed to set-on-top!");
         }))
-        .invoke_handler(tauri::generate_handler![get_args,get_data,get_filelist])
+        .invoke_handler(tauri::generate_handler![get_args,get_data,get_filelist,request_name_data])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-
-/*fn get_metadata ->
-*/

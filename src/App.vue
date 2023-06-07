@@ -8,7 +8,7 @@ import Sidebar from "./components/Sidebar.vue";
 import Viewer from "./components/Viewer.vue";
 import {ref, reactive} from "vue";
 import {appWindow} from "@tauri-apps/api/window"
-import {convertFileSrc} from "@tauri-apps/api/tauri";
+import {convertFileSrc, invoke} from "@tauri-apps/api/tauri";
 import {listen} from "@tauri-apps/api/event";
 /*
 import parser from 'woff2-parser';
@@ -35,7 +35,9 @@ function requestLoadFont(path){
     addFontFace(path)
 
 }
-
+invoke('request_name_data', { path: "C:\\Users\\ym174\\Downloads\\fonts\\Noto-Sans-CJK-JP-master\\Noto-Sans-CJK-JP-master\\fonts\\NotoSansCJKjp-Bold.woff2" }).then(message => {
+    console.log('command_with_messge', message)
+})
 function addFontFace(path) {
    loadedFontFace = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
     loadedFontFace.load().then(function (loaded_face) {

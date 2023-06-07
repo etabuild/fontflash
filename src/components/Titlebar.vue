@@ -107,7 +107,9 @@ const toggleWindowMaximize =(()=>{
 .logo_main {
     height: 40%;
 }
-
+.win_control>svg{
+    margin :auto auto;
+}
 #b_minimize:hover, #b_maximize:hover {
     background: #d3dce5;
     border-radius: 0;
