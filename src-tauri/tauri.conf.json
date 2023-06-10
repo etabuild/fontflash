@@ -33,12 +33,11 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "(c) 2023 eta.build",
       "deb": {
         "depends": []
       },
       "resources": [
-        "../src/data/version.json"
       ],
       "externalBin": [],
       "icon": [
@@ -73,7 +72,7 @@
     },
     "windows": [
       {
-        "decorations": false,
+        "decorations": true,
         "transparent": true,
         "fullscreen": false,
 

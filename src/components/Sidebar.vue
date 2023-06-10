@@ -2,7 +2,7 @@
 import {ref, reactive} from "vue";
 
 let ui = reactive({
-    isOpenFile: true,
+    isOpenFile: false,
     isOpenSidebar: false
 })
 

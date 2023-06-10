@@ -11,13 +11,11 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 */
-use std::{env, path, thread, time};
-use std::borrow::Cow;
+use window_vibrancy::{apply_blur, apply_mica, apply_vibrancy, NSVisualEffectMaterial};
+use std::{env, path, thread};
 use tauri::{AppHandle, Manager, Wry};
 use window_shadows::set_shadow;
 use std::fs;
-/*use std::fs::File;
-*/use std::io::BufRead;
 use allsorts::binary::read::ReadScope;
 use allsorts::error::ParseError;
 use allsorts::font_data::FontData;
@@ -25,11 +23,7 @@ use allsorts::tables::{NameTable, OpenTypeData};
 use allsorts::tag;
 use allsorts::woff2::Woff2Font;
 use encoding_rs::{Encoding, MACINTOSH, UTF_16BE};
-use tauri::api::dir::is_dir;
-use fonttools::font::{self, Font, Table};
-use fonttools::name::{name, NameRecord, NameRecordID};
 use serde::{Serialize, Deserialize};
-use tauri::api::http::FormPart::File;
 use ttf_parser::Weight;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -86,7 +80,7 @@ fn get_data(path: String) -> FileData {
     println!("{}", path.to_string());
 
     if check_extension(path.clone()) {
-        let data = std::fs::read(path.clone()).unwrap();
+        let data = fs::read(path.clone()).unwrap();
         println!("aaaaa");
         let face = match ttf_parser::Face::parse(&data, 0) {
             Ok(f) => f,
@@ -252,9 +246,7 @@ fn convert_weight(weight: Weight) -> u16 {
         Weight::ExtraBold => 800,
         Weight::Black => 900,
         Weight::Other(value) => value,
-        _ => {
-            0
-        }
+
     };
 }
 
@@ -267,18 +259,20 @@ fn get_metadata() -> FileMetaData{
 #[tauri::command]
 fn get_font_data_from_args(app: AppHandle<Wry>) -> FileDataContainer{
     let mut args: Vec<String> = env::args().collect();
-    return if args.len() >= 2 {
-        thread::spawn(move || {
-            app.emit_all("request_detected", &args[1]).expect("Couldn't send filepath");
-        });
-
-        request_name_data(args[1].clone())
-    } else {
+    return if args.len() < 2 {
         FileDataContainer {
             err: "Couldn't find arg".to_string(),
             names: vec![],
             dir_files: vec![],
         }
+    } else {
+        app.emit_all("request_detected", args[1].clone()).expect("Couldn't send filepath");
+
+        thread::spawn(move || {
+            
+        });
+
+        request_name_data(args[1].clone())
     }
 
 }
@@ -290,7 +284,7 @@ fn request_name_data(path: String) -> FileDataContainer {
         names: vec![],
         dir_files: vec![],
     };
-    let mut buffer = match std::fs::read(path) {
+    let mut buffer = match fs::read(path) {
         Err(err) => return err_data,
         Ok(ok) => ok
     };
@@ -431,11 +425,29 @@ fn main() {
     */    tauri::Builder::default()
         .setup(|app| {
             let window = app.get_window("main").unwrap();
-            set_shadow(&window, true).expect("Unsupported platform!");
-            let mut args: Vec<String> = env::args().collect();
-            println!("{:?}", args);
-            app.emit_all("init", args).unwrap();
+
+            #[cfg(target_os = "macos")]
+            apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+              .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+      
+            #[cfg(target_os = "windows")]
+            apply_mica(&window)
+              .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
             Ok(())
+        })
+        /*.on_page_load(|app, window|{
+/*            let window = app.get_window("main").unwrap();
+*/            set_shadow(&window, true).expect("Unsupported platform!");
+            let args: Vec<String> = env::args().collect();
+            app.emit_all("init", args).unwrap();
+
+        })*/
+        .on_page_load(|window, payload| {
+            println!("on page_load {:?}", payload);
+            let args: Vec<String> = env::args().collect();
+            set_shadow(&window, true).expect("Unsupported platform!");
+            window.emit_all("init", args).unwrap();
+
         })
         .plugin(tauri_plugin_fs_extra::init())
         .plugin(tauri_plugin_single_instance::init(|app, arg, cwd| {

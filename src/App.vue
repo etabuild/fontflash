@@ -23,6 +23,20 @@ appWindow.onFileDropEvent((ev) => {
     requestLoadFont(filepath)
     //=> /absolute/path/example.txt
 })
+requestListener()
+async function requestListener() {
+    await listen('request_detected', event => {
+        console.log(`request_detected ${event.payload}`)
+        ui.isOpenFile = true
+        /*console.log(event.payload)
+        if (event.payload.has_patharg) {
+            console.log(event.payload)
+            a.loadFont(vm, event.payload)
+        } else {
+            alert('Un-supported file!! \n Extension may be wrong. Please rename it.')
+        }*/
+    });
+}
 async function instanceDetectionLister() {
     await listen('init', event => {
         console.log(`init ${event.payload}`)
@@ -68,7 +82,9 @@ let uiState = reactive({
 </script>
 <template>
     <div id="app-root">
+<!--
         <Titlebar class="titlebar"></Titlebar>
+-->
 
         <div v-if="!uiState.isOpenFile" class="blank_view">
             <p id="blank_message">ファイルを開いてね☆</p>

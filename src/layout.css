@@ -2,8 +2,15 @@
 /*    grid-column: 2/3;
     grid-row: 1/2;*/
 }
+.blank_message{
+    position: fixed;
+    top: 40vh;
+    left: 0;
+    right: 0;
+    bottom: 40vh;
+}
 #app-root{
-    background: #f4faff;
+    background: none;
     height: 100vh;
 }
 

@@ -24,6 +24,7 @@ tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/tauri-plug
 window-shadows = { git = "https://github.com/tauri-apps/window-shadows" }
 tauri-plugin-fs-extra = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 ttf-parser = "0.19.0"
+window-vibrancy = {git="https://github.com/tauri-apps/window-vibrancy.git"}
 
 
 [features]

@@ -1112,6 +1112,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "ttf-parser",
  "window-shadows",
+ "window-vibrancy",
 ]
 
 [[package]]
@@ -4364,6 +4365,17 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 name = "window-shadows"
 version = "0.2.1"
 source = "git+https://github.com/tauri-apps/window-shadows#9001c34c8aa4648e44fbb9a1da2eae27de2db245"
+dependencies = [
+ "cocoa",
+ "objc",
+ "raw-window-handle",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "window-vibrancy"
+version = "0.3.2"
+source = "git+https://github.com/tauri-apps/window-vibrancy.git#2866a70d142022ba27d3ecde3dafa9cc7026b065"
 dependencies = [
  "cocoa",
  "objc",
