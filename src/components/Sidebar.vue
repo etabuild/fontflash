@@ -1,6 +1,9 @@
 <script setup>
 import {ref, reactive} from "vue";
 
+const props = defineProps({
+    dirFileList: Array
+})
 let ui = reactive({
     isOpenFile: false,
     isOpenSidebar: false
@@ -19,7 +22,7 @@ function openSidebar(e) {
 </script>
 
 <template>
-    <div v-if="ui.isOpenFile" id="sidebar">
+    <div id="sidebar">
         <div id="sidebar-icons">
             <button class="sidebar_icon" @click="openSidebar($event)">
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -41,6 +44,9 @@ function openSidebar(e) {
                 <button id="path_loadbutton" class="materialicon" @click="loadDirFiles">
                     cloud_upload
                 </button>
+                <div class="item-file" v-for="(filename, index) in props.dirFileList">
+                    <p>{{filename}}</p>
+                </div>
             </div>
 
             <!--                <div id="folder-viewer">
@@ -70,7 +76,7 @@ function openSidebar(e) {
     color: #ffffff;
     width: 32px;
     height: 32px;
-    margin: 4px 4px;
+    margin: 4px 9px;
     line-height: 32px;
     border-radius: 4px;
     background: none;

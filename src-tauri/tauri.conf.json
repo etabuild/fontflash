@@ -72,8 +72,8 @@
     },
     "windows": [
       {
-        "decorations": true,
-        "transparent": true,
+        "decorations": false,
+        "transparent": false,
         "fullscreen": false,
 
         "height": 600,

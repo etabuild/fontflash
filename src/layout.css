@@ -10,14 +10,14 @@
     bottom: 40vh;
 }
 #app-root{
-    background: none;
+    background: #f1f7ff;
     height: 100vh;
 }
 
 .viewer{
     grid-column: 3/4;
     grid-row: 2/3;
-    padding:0px 12px 12px 12px;
+    padding:0px 24px 24px 24px;
 }
 
 .sidebar{
@@ -25,12 +25,12 @@
     grid-row: 2/3;
 }
 .container.sidebar-open{
-    grid-template-columns: 40px 200px 1fr;
+    grid-template-columns: 50px 200px 1fr;
 
 }
 .container {
     display: grid;
-    grid-template-columns: 40px 0 1fr;
+    grid-template-columns: 50px 0 1fr;
     grid-template-rows:  40px 1fr;
     row-gap: 8px;
     margin-top: -40px;

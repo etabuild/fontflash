@@ -2,7 +2,6 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 
-import Main from "./components/Main.vue";
 import Titlebar from "./components/Titlebar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import Viewer from "./components/Viewer.vue";
@@ -13,16 +12,18 @@ import {listen} from "@tauri-apps/api/event";
 /*
 import parser from 'woff2-parser';
 */
-
+let fileName = ref(" ")
+let dirFiles = ref([])
 appWindow.onFileDropEvent((ev) => {
     if (ev.payload.type !== 'drop') {
         return
     }
+
     const [filepath] = ev.payload.paths// as string[]
-    console.log(filepath)
+
     requestLoadFont(filepath)
-    //=> /absolute/path/example.txt
 })
+
 requestListener()
 async function requestListener() {
     await listen('request_detected', event => {
@@ -42,34 +43,42 @@ async function instanceDetectionLister() {
         console.log(`init ${event.payload}`)
 
     });
+    await listen('file_request', event=>{
+        console.log(event.payload)
+        addFontFace(event.payload)
+    })
 }
 instanceDetectionLister()
 let loadedFontFace;
 function requestLoadFont(path){
     addFontFace(path)
+    invoke('request_name_data',
+        { path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff" })
+        .then(message => {
+            console.log('command_with_messge', message)
+            dirFiles.value = message.dir_files
 
+            /*
+                fileName=message
+            */
+        })
 }
-invoke('request_name_data', { path: "C:\\Users\\ym174\\Downloads\\fonts\\Noto-Sans-CJK-JP-master\\Noto-Sans-CJK-JP-master\\fonts\\NotoSansCJKjp-Bold.woff2" }).then(message => {
+invoke('request_name_data',
+    { path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff"})
+    .then(message => {
     console.log('command_with_messge', message)
+    dirFiles.value = message.dir_files
+/*
+    fileName=message
+*/
 })
 function addFontFace(path) {
    loadedFontFace = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
     loadedFontFace.load().then(function (loaded_face) {
-        /// フォント読み込み成功
-        /// body要素全体にそれを適用する
         document.fonts.add(loaded_face);
-/*        if (path !== null) {
-            let splited_path = fontdata.filepath.split('\\')
-            vm.filename = splited_path[splited_path.length - 1]
-        }*/
-
-
+        fileName.value = path
     }).catch(function (e) {
-        /// フォント読み込み失敗
         alert('Failed to load the file: '+ path)
-/*
-        message = 'フォントの読み込みに失敗';
-*/
     });
 }
 
@@ -82,16 +91,13 @@ let uiState = reactive({
 </script>
 <template>
     <div id="app-root">
-<!--
-        <Titlebar class="titlebar"></Titlebar>
--->
-
+        <Titlebar></Titlebar>
         <div v-if="!uiState.isOpenFile" class="blank_view">
             <p id="blank_message">ファイルを開いてね☆</p>
         </div>
         <div v-if="uiState.isOpenFile" class="container" id="main">
-            <Sidebar class="sidebar"></Sidebar>
-            <Viewer class="viewer"></Viewer>
+            <Sidebar class="sidebar" :dir-file-list="dirFiles"></Sidebar>
+            <Viewer class="viewer" :fileName="fileName"></Viewer>
         </div>
     </div>
 </template>
@@ -106,6 +112,8 @@ let uiState = reactive({
     font-family: notosans, 'BIZ UDPゴシック', sans-serif;
     margin: 0;
     padding: 0;
+    user-select: none;
+
 }
 
 html, body {

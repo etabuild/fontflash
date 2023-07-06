@@ -1,27 +1,40 @@
 <script setup>
-import {ref, reactive, computed} from "vue";
-let font = reactive({
-    familyName: "familynameHere",
-    fontWeight: "000"
+import {ref, reactive, computed, toRefs, watch} from "vue";
+import {watchEffect} from "vue";
+
+const props = defineProps({
+    fileName: String
 })
-const fontsize = computed(()=>Math.round(config.previewFontSizeRate * 1.4) + 10 + 'pt')
+
+let previewFontWeight = computed(() =>
+    Math.round(config.fontWeight * 10)
+)
+
+/*const {fileName} = toRefs(props)*/
+let fontsize = computed(() => Math.round(config.previewFontSizeRate * 1.4) + 10 + 'pt')
 let config = reactive({
-    previewFontSizeRate:11
+    previewFontSizeRate: 11,
+    fontWeight: 10
 })
+
+
+function installFont() {
+
+}
+
 /*
 let fontsize = 500
 */
-let filename = "name"
 </script>
 
 <template>
     <div id="viewer">
 
         <div class="font_description">
-            <p id="family-name">{{ font.familyName }}</p>
+            <p id="family-name">{{ props.fileName }}</p>
             <div id="font-info">
-                <p id="control-font-weight" v-if="font.hasWeight">{{ font.fontWeight }}</p>
-                <p id="filename">{{ filename }}</p>
+                <p id="control-font-weight">{{ }}</p>
+                <p id="filename">{{ props.fileName }}</p>
             </div>
 
 
@@ -29,11 +42,17 @@ let filename = "name"
                 <p class="p_size">{{ fontsize }}</p>
                 <input class="range" id="range_fontsize_1"
                        v-model.number="config.previewFontSizeRate" type="range"/>
+                <input class="range" id="range-font-weight" v-model.number="config.fontWeight" type="range">
             </div>
+            <button class="b-install-font" @click="installFont()">インストール</button>
         </div>
         <div id="preview_area">
-            <textarea id="preview0" :style="{fontSize: fontsize}"
-                      class="preview">あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>
+            <!--            <textarea id="preview0" :style="{fontSize: fontsize}"
+                                  class="preview">あのイーハトーヴォのす/\きとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>-->
+            <p class="preview-text" style="{font-variation-settings: 'wght' 300;font-size:2em}">
+                Loremしかし私から何にも聞かないＫは、いつもよりなお黙っていたところで、素性の知れない人は厭だと答えるのです。</p>
+            <p class="preview-text" :style="{fontVariationSettings:['wght',1000],fontSize:fontsize}">
+                123456 Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
         </div>
         <div id="footer_area">
         </div>
@@ -43,7 +62,9 @@ let filename = "name"
 <style scoped>
 
 .font_description {
+    /*
     display: grid;
+    */
     grid-template-columns: 1fr auto;
     grid-template-rows: 2fr 1fr;
 }
@@ -63,12 +84,14 @@ let filename = "name"
 .range {
     margin: 5px 0px 5px 5px
 }
+
 #family-name {
     font-weight: 600;
     color: #000;
     font-size: 1.8em;
     margin-left: 2px;
 }
+
 #control-font-weight {
     background: #20ffaa;
     color: #000;
@@ -80,7 +103,6 @@ let filename = "name"
 
 
 .preview {
-    border: none;
     resize: none;
     /*
     font-size: 400pt;
@@ -90,13 +112,16 @@ let filename = "name"
     background: none;
     width: calc(100% - 10px);
     line-height: 1.2;
-    overflow: scroll;
+    overflow: hidden;
     background: #ffffff;
     border-radius: 10px;
     padding: 10px;
     height: 90%;
+    border: #8c8c8c solid 1px;
 
-}/*
+}
+
+/*
 #filename {
     display: inline-block;
     padding: 0px 4px;
@@ -105,5 +130,14 @@ let filename = "name"
 .preview :focus {
     outline: none;
     background: #000;
+}
+
+.preview-text {
+
+    font-family: 'LoadedFont';
+    font-size: 1.4em;
+    /*
+    font-variation-settings: 'wght' 1000;
+    */
 }
 </style>
