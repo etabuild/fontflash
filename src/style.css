@@ -1,3 +1,14 @@
 button {
-    border:none
+    border:none;
+    border-radius: 3px;
+    color: #1886fa;
+    background: none;
+}
+
+button.small {
+    padding:2px;
+    font-size:1em;
+}
+button:hover{
+    background: #e0ecf8;
 }

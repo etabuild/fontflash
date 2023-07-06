@@ -9,6 +9,8 @@ import {ref, reactive} from "vue";
 import {appWindow} from "@tauri-apps/api/window"
 import {convertFileSrc, invoke} from "@tauri-apps/api/tauri";
 import {listen} from "@tauri-apps/api/event";
+import { open } from '@tauri-apps/api/dialog';
+
 /*
 import parser from 'woff2-parser';
 */
@@ -86,11 +88,22 @@ function addFontFace(path) {
     }).catch(function (e) {
         alert('Failed to load the file: ' + path)
     });
+    uiState.isOpenFile = true
+}
+async function requestFileDialog() {
+    const selected = await open({
+        multiple: false,
+        filters: [{
+            name: 'FontFile',
+            extensions: ['ttf', 'otf', 'woff', 'woff2']
+        }]
+    })
+    console.log(selected)
+    requestLoadFont(selected)
 }
 
-
 let uiState = reactive({
-    isOpenFile: true
+    isOpenFile: false
 })
 
 
@@ -99,7 +112,7 @@ let uiState = reactive({
     <div id="app-root">
         <Titlebar></Titlebar>
         <div v-if="!uiState.isOpenFile" class="blank_view">
-            <p id="blank_message">ファイルを開いてね☆</p>
+            <p id="blank_message">Drag font file here or <button @click="requestFileDialog" class="small">Browse</button></p>
         </div>
         <div v-if="uiState.isOpenFile" class="container" id="main">
             <Sidebar class="sidebar" :dir-file-list="dirFiles"></Sidebar>
