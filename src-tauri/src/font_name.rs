@@ -8,8 +8,10 @@ use allsorts::woff2::Woff2Font;
 use allsorts::woff::WoffFont;
 use encoding_rs::{Encoding, MACINTOSH, UTF_16BE};
 use tauri::{AppHandle, Manager, Wry};
-use crate::{FileDataContainer, get_dir};
-pub(crate) fn request_name_data(path: String) -> FileDataContainer {
+use crate::{FileDataContainer};
+use crate::dirs::get_file_from_current_dir;
+
+pub(crate) fn get_font_name(path: String) -> FileDataContainer {
     let err_data = FileDataContainer {
         err: "noooooo".to_string(),
         names: vec![],
@@ -33,26 +35,17 @@ pub(crate) fn request_name_data(path: String) -> FileDataContainer {
     };
 
     let result_name = match &font_file {
-        /*  FontData::OpenType(font_file) => match &font_file.data {
-              OpenTypeData::Single(ttf) => {
-                  dump_ttf(&table_provider, &font_file.scope, ttf, table, flags)?
-              }
-              OpenTypeData::Collection(ttc) => {
-                  dump_ttc(&table_provider, &font_file.scope, ttc, table, flags)?
-              }
-          },*/
-        FontData::OpenType(font_file) => match &font_file.data{
-            OpenTypeData::Single(ttf) => match get_ttf_name(&font_file.scope, ttf){
+        FontData::OpenType(font_file) => match &font_file.data {
+            OpenTypeData::Single(ttf) => match get_ttf_name(&font_file.scope, ttf) {
                 Ok(ok) => ok,
                 Err(_) => return err_data
             },
-            OpenTypeData::Collection(ttc) => match get_ttc_name(&font_file.scope, ttc){
+            OpenTypeData::Collection(ttc) => match get_ttc_name(&font_file.scope, ttc) {
                 Ok(ok) => ok,
                 Err(_) => return err_data
             }
-
         },
-        FontData::Woff(woff_file) => match get_woff_name(woff_file){
+        FontData::Woff(woff_file) => match get_woff_name(woff_file) {
             Ok(ok) => ok,
             Err(_) => return err_data
         },
@@ -62,7 +55,7 @@ pub(crate) fn request_name_data(path: String) -> FileDataContainer {
         },
         _ => vec![],
     };
-    let dir_files = get_dir(&path);
+    let dir_files = get_file_from_current_dir(&path);
     /*    match result_name {
             Err(err)=> { data.err = err.to_string() }
             Ok(ok) => {data.names = ok}
@@ -70,24 +63,28 @@ pub(crate) fn request_name_data(path: String) -> FileDataContainer {
     let mut data = FileDataContainer {
         err: "undefined".to_string(),
         names: result_name,
-        dir_files
+        dir_files,
     };
     return data;
 }
 
 
-fn get_ttc_name<'a>(scope:&ReadScope<'a>,ttc:&TTCHeader<'a>) -> Result<Vec<Vec<String>>,ParseError>{
+fn get_ttc_name<'a>(scope: &ReadScope<'a>, ttc: &TTCHeader<'a>) -> Result<Vec<Vec<String>>, ParseError> {
     for offset_table_offset in &ttc.offset_tables {
         let offset_table_offset = usize::try_from(offset_table_offset).map_err(ParseError::from)?;
         let offset_table = scope.offset(offset_table_offset).read::<OffsetTable>()?;
         get_ttf_name(scope, &offset_table)?;
     }
-    return Ok(vec![])
+    return Ok(vec![]);
 }
 
-fn get_ttf_name<'a>(scope: &ReadScope<'a>,ttf:&OffsetTable<'a>) -> Result<Vec<Vec<String>>, ParseError>{
-    return Ok(vec![])
-
+fn get_ttf_name<'a>(scope: &ReadScope<'a>, ttf: &OffsetTable<'a>) -> Result<Vec<Vec<String>>, ParseError> {
+    if let Ok(Some(name_table_data)) = ttf.read_table(scope, tag::NAME) {
+        let name_table = name_table_data.read::<NameTable>()?;
+        Ok::<Result<Vec<Vec<String>>, ParseError>, ParseError>(dump_name_table(&name_table))?
+    } else {
+        return Ok(vec![]);
+    }
 }
 
 fn get_woff2_name(woff: &Woff2Font) -> Result<Vec<Vec<String>>, ParseError> {
@@ -101,7 +98,7 @@ fn get_woff2_name(woff: &Woff2Font) -> Result<Vec<Vec<String>>, ParseError> {
 }
 
 fn get_woff_name(woff: &WoffFont) -> Result<Vec<Vec<String>>, ParseError> {
-    if let Some(entry) =woff
+    if let Some(entry) = woff
         .table_directory
         .iter()
         .find(|entry| entry.tag == tag::NAME)
@@ -110,8 +107,8 @@ fn get_woff_name(woff: &WoffFont) -> Result<Vec<Vec<String>>, ParseError> {
         let name_table = table.scope().read::<NameTable>()?;
         dump_name_table(&name_table)?;
         Ok::<Result<Vec<Vec<String>>, ParseError>, ParseError>(dump_name_table(&name_table))?
-    }else{
-        return Ok(vec![])
+    } else {
+        return Ok(vec![]);
     }
 }
 
@@ -119,7 +116,7 @@ fn dump_name_table(name_table: &NameTable) -> Result<Vec<Vec<String>>, ParseErro
     let mut names: Vec<Vec<String>> = vec![];
 
     for name_record in &name_table.name_records {
-        let mut pair: Vec<String> = vec!["".to_string(),"".to_string()];
+        let mut pair: Vec<String> = vec!["".to_string(), "".to_string()];
         let platform = name_record.platform_id;
         let encoding = name_record.encoding_id;
         let language = name_record.language_id;

@@ -1,7 +1,7 @@
 <script setup>
 import {appWindow, LogicalPosition, LogicalSize} from '@tauri-apps/api/window'
 import {ref, reactive} from "vue";
-import { onMounted } from '@vue/runtime-core'
+import {onMounted} from '@vue/runtime-core'
 
 let windowData = reactive({
     isMaximized: false
@@ -36,7 +36,7 @@ onMounted(() => {
 })
 const closeWindow = () => appWindow.close()
 const minimizeWindow = () => appWindow.minimize()
-const toggleWindowMaximize =(()=>{
+const toggleWindowMaximize = (() => {
     windowData.isMaximized = !windowData.isMaximized
     appWindow.toggleMaximize()
 })
@@ -44,9 +44,9 @@ const toggleWindowMaximize =(()=>{
 
 <template>
     <div id="content">
-        <button id="b_navigation">
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.753 18h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493L2.753 18h18.5-18.5Zm0-6.497h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493l.102-.007h18.5-18.5Zm-.001-6.5h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5A.75.75 0 0 1 2.65 5.01l.102-.007h18.5-18.5Z" fill="#000000"/></svg>
-        </button>
+        <!--        <button id="b_navigation">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.753 18h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493L2.753 18h18.5-18.5Zm0-6.497h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5a.75.75 0 0 1-.102-1.493l.102-.007h18.5-18.5Zm-.001-6.5h18.5a.75.75 0 0 1 .102 1.493l-.102.007h-18.5A.75.75 0 0 1 2.65 5.01l.102-.007h18.5-18.5Z" fill="#000000"/></svg>
+                </button>-->
         <p data-tauri-drag-region @click="toggle_windowMaximize($event)" id="label_appname"><img
             class="logo_main"
             src="../assets/logo/logo_text_grey.svg">
@@ -65,7 +65,7 @@ const toggleWindowMaximize =(()=>{
                     d="M5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75A2.75 2.75 0 0 1 5.75 3Zm0 1.5c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25H5.75Z"
                     fill="#212121"/>
             </svg>
-            <svg  v-if="windowData.isMaximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
+            <svg v-if="windowData.isMaximized" width="14" height="14" fill="none" viewBox="0 0 24 24"
                  xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M7.518 5H6.009a3.25 3.25 0 0 1 3.24-3h8.001A4.75 4.75 0 0 1 22 6.75v8a3.25 3.25 0 0 1-3 3.24v-1.508a1.75 1.75 0 0 0 1.5-1.732v-8a3.25 3.25 0 0 0-3.25-3.25h-8A1.75 1.75 0 0 0 7.518 5ZM5.25 6A3.25 3.25 0 0 0 2 9.25v9.5A3.25 3.25 0 0 0 5.25 22h9.5A3.25 3.25 0 0 0 18 18.75v-9.5A3.25 3.25 0 0 0 14.75 6h-9.5ZM3.5 9.25c0-.966.784-1.75 1.75-1.75h9.5c.967 0 1.75.784 1.75 1.75v9.5a1.75 1.75 0 0 1-1.75 1.75h-9.5a1.75 1.75 0 0 1-1.75-1.75v-9.5Z"
@@ -107,16 +107,26 @@ const toggleWindowMaximize =(()=>{
 .logo_main {
     height: 40%;
 }
-.win_control>svg{
-    margin :auto auto;
+
+.win_control > svg {
+    margin: auto auto;
 }
+
 #b_minimize:hover, #b_maximize:hover {
     background: #d3dce5;
     border-radius: 0;
 
 }
+#b_minimize {
+    grid-column: 4/5;
+    grid-row: 1/2;
+    /*
+    transform:translateY(-6px);
+    */
+
+}
 #b_maximize {
-    grid-column: 6/7;
+    grid-column: 5/6;
     grid-row: 1/2;
     /*
     transform:translateY(-6px);
@@ -127,8 +137,8 @@ const toggleWindowMaximize =(()=>{
 #content {
     background: #e0ecf8;
     height: 40px;
-/*    grid-column: 2/4;
-    grid-row: 1/2;*/
+    /*    grid-column: 2/4;
+        grid-row: 1/2;*/
     /*
     background: #fff;
     */
@@ -146,7 +156,7 @@ const toggleWindowMaximize =(()=>{
     */
     display: grid;
     grid-template-rows: 100%;
-    grid-template-columns: 40px 1fr 40px 40px 47px 47px 47px;
+    grid-template-columns: 1fr 40px 40px 47px 47px 47px;
     /*
     margin: -10px -20px 0 -20px;
     */
@@ -163,12 +173,12 @@ button {
     font-size: 1.25em;
     margin-left: 10px;
     line-height: 43px;
-    grid-column: 2/3;
+    grid-column: 1/2;
     grid-row: 1/2;
 }
 
 #b_close {
-    grid-column: 7/8;
+    grid-column: 6/7;
     grid-row: 1/2;
 }
 
@@ -182,19 +192,19 @@ button {
     border-radius: 0px;
 }
 
-#b_navigation{
+#b_navigation {
     margin-left: 5px;
     padding: 10px;
 }
 
 #b_pin {
-    grid-column: 4/5;
+    grid-column: 3/4;
     grid-row: 1/2;
 }
 
 
 #b_setting {
-    grid-column: 3/4;
+    grid-column: 2/3;
     grid-row: 1/2;
 }
 </style>

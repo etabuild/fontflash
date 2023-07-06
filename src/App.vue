@@ -12,7 +12,7 @@ import {listen} from "@tauri-apps/api/event";
 /*
 import parser from 'woff2-parser';
 */
-let fileName = ref(" ")
+let fileName = ref("Undefined")
 let dirFiles = ref([])
 appWindow.onFileDropEvent((ev) => {
     if (ev.payload.type !== 'drop') {
@@ -20,11 +20,12 @@ appWindow.onFileDropEvent((ev) => {
     }
 
     const [filepath] = ev.payload.paths// as string[]
-
+    console.log(filepath)
     requestLoadFont(filepath)
 })
 
 requestListener()
+
 async function requestListener() {
     await listen('request_detected', event => {
         console.log(`request_detected ${event.payload}`)
@@ -38,22 +39,25 @@ async function requestListener() {
         }*/
     });
 }
+
 async function instanceDetectionLister() {
     await listen('init', event => {
         console.log(`init ${event.payload}`)
 
     });
-    await listen('file_request', event=>{
+    await listen('file_request', event => {
         console.log(event.payload)
         addFontFace(event.payload)
     })
 }
+
 instanceDetectionLister()
 let loadedFontFace;
-function requestLoadFont(path){
+
+function requestLoadFont(path) {
     addFontFace(path)
     invoke('request_name_data',
-        { path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff" })
+        {path: path})
         .then(message => {
             console.log('command_with_messge', message)
             dirFiles.value = message.dir_files
@@ -63,22 +67,24 @@ function requestLoadFont(path){
             */
         })
 }
+
 invoke('request_name_data',
-    { path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff"})
+    {path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff"})
     .then(message => {
-    console.log('command_with_messge', message)
-    dirFiles.value = message.dir_files
-/*
-    fileName=message
-*/
-})
+        console.log('command_with_messge', message)
+        dirFiles.value = message.dir_files
+        /*
+            fileName=message
+        */
+    })
+
 function addFontFace(path) {
-   loadedFontFace = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
+    loadedFontFace = new FontFace("LoadedFont", "url(" + convertFileSrc(path) + ")")
     loadedFontFace.load().then(function (loaded_face) {
         document.fonts.add(loaded_face);
         fileName.value = path
     }).catch(function (e) {
-        alert('Failed to load the file: '+ path)
+        alert('Failed to load the file: ' + path)
     });
 }
 
@@ -97,7 +103,7 @@ let uiState = reactive({
         </div>
         <div v-if="uiState.isOpenFile" class="container" id="main">
             <Sidebar class="sidebar" :dir-file-list="dirFiles"></Sidebar>
-            <Viewer class="viewer" :fileName="fileName"></Viewer>
+            <Viewer class="viewer" :filepath="fileName"></Viewer>
         </div>
     </div>
 </template>

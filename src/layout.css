@@ -14,10 +14,15 @@
     height: 100vh;
 }
 
+
 .viewer{
     grid-column: 3/4;
     grid-row: 2/3;
-    padding:0px 24px 24px 24px;
+    padding:0px 12px 24px 12px;
+    overflow-y:hidden;
+    overflow-x: hidden;
+    display: grid;
+    grid-template-rows: max-content 1fr;
 }
 
 .sidebar{
