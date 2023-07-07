@@ -73,6 +73,7 @@ function requestLoadDir(){
     overflow: hidden;
     border-radius: 8px;
     margin-bottom: 12px;
+    margin-right: 12px;
     border:1px solid #707070;
     background-color: #ffffff
 }

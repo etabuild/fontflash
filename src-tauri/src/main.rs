@@ -88,17 +88,11 @@ fn main() {
             }
             Ok(())
         })
-        /*.on_page_load(|app, window|{
-/*            let window = app.get_window("main").unwrap();
-*/            set_shadow(&window, true).expect("Unsupported platform!");
-            let args: Vec<String> = env::args().collect();
-            app.emit_all("init", args).unwrap();
-
-        })*/
         .on_page_load(|window, payload| {
             println!("on page_load {:?}", payload);
             let args: Vec<String> = env::args().collect();
             set_shadow(&window, true).expect("Unsupported platform!");
+
             window.emit_all("init", args).unwrap();
 
         })

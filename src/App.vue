@@ -32,19 +32,16 @@ async function requestListener() {
     await listen('request_detected', event => {
         console.log(`request_detected ${event.payload}`)
         ui.isOpenFile = true
-        /*console.log(event.payload)
-        if (event.payload.has_patharg) {
-            console.log(event.payload)
-            a.loadFont(vm, event.payload)
-        } else {
-            alert('Un-supported file!! \n Extension may be wrong. Please rename it.')
-        }*/
+
     });
 }
 
 async function instanceDetectionLister() {
     await listen('init', event => {
         console.log(`init ${event.payload}`)
+        alert(event.payload
+        )
+        addFontFace(event.payload)
 
     });
     await listen('file_request', event => {
@@ -69,6 +66,7 @@ function requestLoadFont(path) {
             */
         })
 }
+
 
 invoke('request_name_data',
     {path: "C:\\Users\\ym174\\Desktop\\LINE_Seed_JP\\LINE_Seed_JP\\Web\\WOFF\\LINESeedJP_OTF_Bd.woff"})
