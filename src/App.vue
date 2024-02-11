@@ -26,6 +26,8 @@ appWindow.onFileDropEvent((ev) => {
     requestLoadFont(filepath)
 })
 
+let nameRecords = ref([])
+
 requestListener()
 
 async function requestListener() {
@@ -57,10 +59,13 @@ function requestLoadFont(path) {
     addFontFace(path)
     invoke('request_name_data',
         {path: path})
-        .then(message => {
-            console.log('command_with_messge', message)
-            dirFiles.value = message.dir_files
-
+        .then(data => {
+            console.log('command_with_messge', data)
+            dirFiles.value = data.dir_files
+            const records = {}
+            data.names.forEach((item, index)=> {
+            })
+            nameRecords.value = data.names
             /*
                 fileName=message
             */
@@ -114,7 +119,7 @@ let uiState = reactive({
         </div>
         <div v-if="uiState.isOpenFile" class="container" id="main">
             <Sidebar class="sidebar" :dir-file-list="dirFiles"></Sidebar>
-            <Viewer class="viewer" :filepath="fileName"></Viewer>
+            <Viewer class="viewer" :filepath="fileName" :nameRecords="nameRecords"></Viewer>
         </div>
     </div>
 </template>

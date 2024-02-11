@@ -14,7 +14,7 @@
 }
 ::-webkit-scrollbar-thumb {/*つまみの部分*/
     border-radius: 10px;
-    background: #d2d2d2;
+    background: #e1e1e1;
     margin: 3px;
 
 }

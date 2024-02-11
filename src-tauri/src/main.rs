@@ -14,7 +14,8 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 */
-use font_name::get_font_name;
+use font_name::get_dir_files;
+use font_name::get_name_records;
 use dirs::get_file_from_current_dir;
 use window_vibrancy::{apply_blur, apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 use std::{env, path, thread};
@@ -35,8 +36,44 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct FileDataContainer {
     err: String,
-    names: Vec<Vec<String>>,
     dir_files: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct NamesData {
+    error: bool,
+    copyright: Vec<String>,
+    font_family: Vec<String>,
+    font_subfamily: Vec<String>,
+    unique_identifier: Vec<String>,
+    full_font_name: Vec<String>,
+    version: Vec<String>,
+    postscript_name: Vec<String>,
+    trademark: Vec<String>,
+    manufacturer: Vec<String>,
+    designer: Vec<String>,
+    description: Vec<String>,
+    url_vendor: Vec<String>,
+    url_designer: Vec<String>,
+    license_description: Vec<String>,
+    license_info_url: Vec<String>,
+    typographic_family: Vec<String>,
+    typographic_subfamily: Vec<String>,
+    compatible_full: Vec<String>,
+    sample_text: Vec<String>,
+    postscript_cid_findfont: Vec<String>,
+    wws_family_name: Vec<String>,
+    wws_subfamily_name: Vec<String>,
+    light_background_palette: Vec<String>,
+    dark_background_palette: Vec<String>,
+    variations_postscript_name_prefix: Vec<String>,
+    others: Vec<String>
+}
+
+#[derive(Debug)]
+enum FontLoadError {
+    ParseError,
+    Error,
 }
 
 fn get_path() -> String {
@@ -44,8 +81,9 @@ fn get_path() -> String {
     return args[1].clone();
 }
 #[tauri::command]
-fn request_name_data(path:String)->FileDataContainer{
-    get_font_name(path)
+fn request_name_data(path:String)->Result<Option<NamesData>, String>{
+
+    get_name_records(path)
 }
 
 
@@ -55,7 +93,6 @@ fn get_font_data_from_args(app: AppHandle<Wry>) -> FileDataContainer{
     return if args.len() < 2 {
         FileDataContainer {
             err: "Couldn't find arg".to_string(),
-            names: vec![],
             dir_files: vec![],
         }
     } else {
@@ -64,9 +101,8 @@ fn get_font_data_from_args(app: AppHandle<Wry>) -> FileDataContainer{
         thread::spawn(move || {
             
         });
-        get_font_name(args[1].clone())
+        get_dir_files(args[1].clone())
     }
-
 }
 
 fn main() {

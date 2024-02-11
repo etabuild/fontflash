@@ -152,8 +152,8 @@ export default {
                 loadedFontFace: null,
                 hasWeight: true,
                 fontWeight: "000",
-                familyName: 'abcあいう亜012',
-                fileName: 'N/A',
+                familyName: '',
+                fileName: '',
             },
             dir: {
                 currentDir: "",

@@ -12,3 +12,6 @@ button.small {
 button:hover{
     background: #e0ecf8;
 }
+:focus{
+    outline:none;
+}

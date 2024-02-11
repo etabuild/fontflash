@@ -1,9 +1,15 @@
 <script setup>
 import {ref, reactive, computed, toRefs, watch} from "vue";
 import {watchEffect} from "vue";
+import Preview from "./Preview.vue";
+import Metadata from "./Metadata.vue";
 
 const props = defineProps({
-    filepath: String
+    filepath: String,
+    nameRecords: [],
+    familyName: String,
+    psName:String,
+    weight: String
 })
 
 let filename = computed(() => {
@@ -16,13 +22,16 @@ let previewFontWeight = computed(() =>
 )
 
 /*const {fileName} = toRefs(props)*/
-let fontsize = computed(() => Math.round(config.previewFontSizeRate * 1.4) + 10 + 'pt')
-let config = reactive({
-    previewFontSizeRate: 11,
-    fontWeight: 10
-})
+const currentTab = ref('preview')
+const switchTab = (target) => {
+    console.log(target)
+    if(target === 'preview' || 'metadata') {
 
+    }
+    currentTab.value = target
 
+    console.log(currentTab.value)
+}
 function installFont() {
 
 }
@@ -44,22 +53,20 @@ let fontsize = 500
         </div>
 
         <div class="font-preview">
-            <div class="font_size_control">
-                <p class="p_size">{{ fontsize }}</p>
-                <input class="range" id="range_fontsize_1"
-                       v-model.number="config.previewFontSizeRate" type="range"/>
-                <input class="range" id="range-font-weight" v-model.number="config.fontWeight" type="range">
-            </div>
-            <button class="b-install-font" @click="installFont()">インストール</button>
 
-            <div id="preview_area">
-                <!--            <textarea id="preview0" :style="{fontSize: fontsize}"
-                                      class="preview">あのイーハトーヴォのす/\きとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。</textarea>-->
-                <p class="preview-text" style="{font-variation-settings: 'wght' 300;font-size:2em}">
-                    Loremしかし私から何にも聞かないＫは、いつもよりなお黙っていたところで、素性の知れない人は厭だと答えるのです。</p>
-                <p class="preview-text" :style="{fontVariationSettings:['wght',1000],fontSize:fontsize}">
-                    123456 Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+            <button class="b-install-font" @click="installFont()">インストール</button>
+            <div class="tablist">
+                <div id="tab_preview"  v-bind:class="{'tab':true,'active':currentTab==='preview'}" @click="switchTab('preview')">
+                    <p>プレビュー</p>
+                </div>
+                <div id="tab_metadata"   v-bind:class="{'tab':true,'active':currentTab==='metadata'}" @click="switchTab('metadata')">
+                    <p>メタデータ</p>
+                </div>
             </div>
+
+            <Preview v-if="currentTab==='preview'"></Preview>
+            <Metadata v-if="currentTab==='metadata'"></Metadata>
+
         </div>
         <div id="footer_area">
         </div>
@@ -67,24 +74,61 @@ let fontsize = 500
 </template>
 
 <style scoped>
-#range-font-weight{
+
+.tab {
+    display: inline-block;
+    margin: 7px;
+    color: #62acff;
+
+}
+
+.tab:hover {
+    color: #1675da
+}
+
+.tab.active:hover:after {
+    background: #1675da;
+    height: 3px;
+    border-radius: 99px;
+    content: '';
+    display: block;
+}
+
+.tab.active:after {
+    background: #1886fa;
+    height: 3px;
+    border-radius: 99px;
+    content: '';
+    display: block;
+}
+.tab.active {
+    color: #1886fa;
+
+}
+
+
+#range-font-weight {
     display: inline-block;
 }
-#range_fontsize_1{
+
+#range_fontsize_1 {
     display: inline-block;
 
 }
-.b-install-font{
+
+.b-install-font {
     display: inline-block;
 }
-.font-preview{
+
+.font-preview {
     grid-row: 2/3;
     padding: 0 12px;
     overflow-y: scroll;
     height: 100%;
     word-break: break-all;
-    overflow-x:auto;
+    overflow-x: auto;
 }
+
 #font-info {
     grid-row: 1/2;
 
@@ -141,7 +185,6 @@ let fontsize = 500
 }
 
 
-
 /*
 #filename {
     display: inline-block;
@@ -160,12 +203,5 @@ let fontsize = 500
     background: #000;
 }
 
-.preview-text {
 
-    font-family: 'LoadedFont';
-    font-size: 1.4em;
-    /*
-    font-variation-settings: 'wght' 1000;
-    */
-}
 </style>
