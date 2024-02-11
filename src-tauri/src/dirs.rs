@@ -1,4 +1,20 @@
 use std::{fs, path};
+use crate::{FileDataContainer, NamesData};
+
+pub(crate) fn get_dir_files(path: String) -> FileDataContainer {
+ 
+    let dir_files = get_file_from_current_dir(&path);
+    /*    match result_name {
+            Err(err)=> { data.err = err.to_string() }
+            Ok(ok) => {data.names = ok}
+        }*/
+    let mut data = FileDataContainer {
+        err: "undefined".to_string(),
+        dir_files,
+    };
+    return data;
+}
+
 
 pub(crate) fn get_file_from_current_dir(path: &String) -> Vec<String> {
     let mut dir_list: Vec<String> = vec![];

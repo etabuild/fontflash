@@ -11,19 +11,6 @@ use tauri::{AppHandle, Manager, Wry};
 use crate::{FileDataContainer, NamesData};
 use crate::dirs::get_file_from_current_dir;
 
-pub(crate) fn get_dir_files(path: String) -> FileDataContainer {
- 
-    let dir_files = get_file_from_current_dir(&path);
-    /*    match result_name {
-            Err(err)=> { data.err = err.to_string() }
-            Ok(ok) => {data.names = ok}
-        }*/
-    let mut data = FileDataContainer {
-        err: "undefined".to_string(),
-        dir_files,
-    };
-    return data;
-}
 
 pub(crate) fn get_name_records(path: String) -> Result<Option<NamesData>, String> {
 

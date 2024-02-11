@@ -115,7 +115,7 @@ let uiState = reactive({
     <div id="app-root">
         <Titlebar></Titlebar>
         <div v-if="!uiState.isOpenFile" class="blank_view">
-            <p id="blank_message">Drag font file here or <button @click="requestFileDialog" class="small">Browse</button></p>
+            <p id="blank_message">Drop font file here or <button @click="requestFileDialog" class="small">Browse</button></p>
         </div>
         <div v-if="uiState.isOpenFile" class="container" id="main">
             <Sidebar class="sidebar" :dir-file-list="dirFiles"></Sidebar>

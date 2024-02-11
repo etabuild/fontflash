@@ -14,7 +14,7 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 */
-use font_name::get_dir_files;
+use dirs::get_dir_files;
 use font_name::get_name_records;
 use dirs::get_file_from_current_dir;
 use window_vibrancy::{apply_blur, apply_mica, apply_vibrancy, NSVisualEffectMaterial};
